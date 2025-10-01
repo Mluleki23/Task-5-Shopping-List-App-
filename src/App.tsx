@@ -1,16 +1,19 @@
-import { useState } from 'react'
+// src/App.tsx
+import { Routes, Route } from "react-router-dom";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Home from "./pages/Home";
+import NavBar from "./component/NavBar";
 
-import './App.css'
-import Login from './pages/Login'
-
-function App() {
- 
-
+export default function App() {
   return (
     <>
-     <Login />
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
-  )
+  );
 }
-
-export default App

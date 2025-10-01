@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import LoginReducer from "./src/features/loginSlice"
+import LoginReducer from "./src/features/LoginSlice"
 import RegisterReducer from "./src/features/RegisterSlice"
 
 
