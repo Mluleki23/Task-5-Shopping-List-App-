@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser, setRegisterData } from "../features/RegisterSlice";
+import { registerUser } from "../features/RegisterSlice";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
 
@@ -8,13 +8,14 @@ export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const status = useSelector((state: RootState) => state.register.status);
+  const error = useSelector((state: RootState) => state.register.error);
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
     name: "",
     surname: "",
     cell: "",
+    email: "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,12 +25,7 @@ export default function Register() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // If you want API call
     dispatch(registerUser(formData) as any);
-
-    // If only Redux store (no API):
-    // dispatch(setRegisterData(formData));
-
     navigate("/profile");
   };
 
@@ -50,13 +46,14 @@ export default function Register() {
           padding: "2rem",
           borderRadius: "10px",
           boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-          width: "320px",
+          width: "350px",
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
         }}
       >
         <h2 style={{ textAlign: "center" }}>Register</h2>
+
         <input
           type="text"
           name="name"
@@ -64,7 +61,14 @@ export default function Register() {
           value={formData.name}
           onChange={handleChange}
           required
+          style={{
+            padding: "0.7rem",
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            fontSize: "1rem",
+          }}
         />
+
         <input
           type="text"
           name="surname"
@@ -72,7 +76,14 @@ export default function Register() {
           value={formData.surname}
           onChange={handleChange}
           required
+          style={{
+            padding: "0.7rem",
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            fontSize: "1rem",
+          }}
         />
+
         <input
           type="tel"
           name="cell"
@@ -80,7 +91,14 @@ export default function Register() {
           value={formData.cell}
           onChange={handleChange}
           required
+          style={{
+            padding: "0.7rem",
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            fontSize: "1rem",
+          }}
         />
+
         <input
           type="email"
           name="email"
@@ -88,7 +106,14 @@ export default function Register() {
           value={formData.email}
           onChange={handleChange}
           required
+          style={{
+            padding: "0.7rem",
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            fontSize: "1rem",
+          }}
         />
+
         <input
           type="password"
           name="password"
@@ -96,7 +121,14 @@ export default function Register() {
           value={formData.password}
           onChange={handleChange}
           required
+          style={{
+            padding: "0.7rem",
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            fontSize: "1rem",
+          }}
         />
+
         <button
           type="submit"
           style={{
@@ -110,13 +142,19 @@ export default function Register() {
         >
           Register
         </button>
+
         {status === "loading" && <p>Registering...</p>}
         {status === "succeeded" && (
           <p style={{ color: "green" }}>Registration successful!</p>
         )}
-        {status === "failed" && (
-          <p style={{ color: "red" }}>Something went wrong.</p>
-        )}
+        {status === "failed" && <p style={{ color: "red" }}>{error || "Something went wrong"}</p>}
+
+        <p style={{ textAlign: "center", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+          Already have an account?{" "}
+          <a href="/login" style={{ color: "#007bff", textDecoration: "none", fontWeight: "500" }}>
+            Log in here
+          </a>
+        </p>
       </form>
     </div>
   );
