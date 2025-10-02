@@ -1,5 +1,6 @@
 // src/redux/slices/LoginSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export interface LoginState {
   loading: boolean;
@@ -7,24 +8,32 @@ export interface LoginState {
   user: any | null;
 }
 
+// Check if user is already logged in from localStorage
+const storedUser = localStorage.getItem("user");
 const initialState: LoginState = {
   loading: false,
   error: null,
-  user: null,
+  user: storedUser ? JSON.parse(storedUser) : null,
 };
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      let users = [];
       
-      // Get users from localStorage
-      const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      // Try to get users from json-server first
+      try {
+        const response = await axios.get("http://localhost:5000/users");
+        users = response.data;
+      } catch (serverError) {
+        // If json-server is not running, fall back to localStorage
+        console.log("json-server not available, using localStorage");
+        users = JSON.parse(localStorage.getItem("users") || "[]");
+      }
       
       // Find user with matching email and password
-      const user = existingUsers.find(
+      const user = users.find(
         (u: any) => u.email === credentials.email && u.password === credentials.password
       );
       

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export interface RegisterState {
   email: string;
@@ -20,7 +21,7 @@ const initialState: RegisterState = {
   error: null,
 };
 
-// Mock registration (no backend needed)
+// Register user with json-server and localStorage
 export const registerUser = createAsyncThunk(
   "register/registerUser",
   async (userData: {
@@ -30,10 +31,7 @@ export const registerUser = createAsyncThunk(
     surname: string;
     cell: string;
   }) => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Store user data in localStorage (mock database)
+    // Always save to localStorage first
     const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
     
     // Check if user already exists
@@ -42,17 +40,29 @@ export const registerUser = createAsyncThunk(
       throw new Error("User with this email already exists");
     }
     
-    // Add new user
     existingUsers.push(userData);
     localStorage.setItem("users", JSON.stringify(existingUsers));
     
-    // Return user data (without password for security)
-    return {
-      email: userData.email,
-      name: userData.name,
-      surname: userData.surname,
-      cell: userData.cell,
-    };
+    // Try to save to json-server if available
+    try {
+      const response = await axios.post("http://localhost:5000/users", userData);
+      return {
+        id: response.data.id,
+        email: response.data.email,
+        name: response.data.name,
+        surname: response.data.surname,
+        cell: response.data.cell,
+      };
+    } catch (serverError) {
+      // If json-server fails, still return success since we saved to localStorage
+      console.log("json-server not available, saved to localStorage only");
+      return {
+        email: userData.email,
+        name: userData.name,
+        surname: userData.surname,
+        cell: userData.cell,
+      };
+    }
   }
 );
 

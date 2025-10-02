@@ -1,0 +1,21 @@
+{
+  "users": [
+    {
+      "name": "we",
+      "surname": "sibisi",
+      "cell": "0791881004",
+      "email": "Mnyandoletho0@gmail.com",
+      "password": "5698",
+      "id": 1
+    },
+    {
+      "name": "li",
+      "surname": "google",
+      "cell": "0791881007",
+      "email": "li@gmail.com",
+      "password": "2314",
+      "id": 2
+    }
+  ],
+  "shoppingList": []
+}
