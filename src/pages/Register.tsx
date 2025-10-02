@@ -95,11 +95,23 @@ export default function Register() {
           Register
         </button>
 
+<<<<<<< HEAD
         {status === "loading" && <p className="message-loading">Registering...</p>}
         {status === "succeeded" && (
           <p className="message-success">Registration successful!</p>
         )}
         {status === "failed" && <p className="message-error">{error || "Something went wrong"}</p>}
+=======
+        {status === "loading" && (
+          <p className="message-loading">Registering...</p>
+        )}
+        {status === "succeeded" && (
+          <p className="message-success">Registration successful!</p>
+        )}
+        {status === "failed" && (
+          <p className="message-error">{error || "Something went wrong"}</p>
+        )}
+>>>>>>> main
 
         <p className="register-text">
           Already have an account?{" "}

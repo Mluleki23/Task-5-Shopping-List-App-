@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+=======
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
+>>>>>>> main
 
 export interface ProfileState {
   name: string;
@@ -19,6 +27,7 @@ const initialState: ProfileState = {
   error: null,
 };
 
+<<<<<<< HEAD
 // Fetch user profile from json-server or localStorage
 export const fetchProfile = createAsyncThunk(
   "profile/fetchProfile",
@@ -42,6 +51,25 @@ export const fetchProfile = createAsyncThunk(
       throw new Error("User not found");
     }
     
+=======
+// Fetch user profile from localStorage
+export const fetchProfile = createAsyncThunk(
+  "profile/fetchProfile",
+  async (email: string) => {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Get users from localStorage
+    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+
+    // Find user by email
+    const user = existingUsers.find((u: any) => u.email === email);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+>>>>>>> main
     return {
       name: user.name,
       surname: user.surname,
@@ -60,6 +88,7 @@ export const updateProfile = createAsyncThunk(
     surname: string;
     cell: string;
   }) => {
+<<<<<<< HEAD
     // Update in localStorage
     const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
     const userIndex = existingUsers.findIndex((u: any) => u.email === userData.email);
@@ -68,12 +97,31 @@ export const updateProfile = createAsyncThunk(
       throw new Error("User not found");
     }
     
+=======
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Get users from localStorage
+    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+
+    // Find and update user
+    const userIndex = existingUsers.findIndex(
+      (u: any) => u.email === userData.email
+    );
+
+    if (userIndex === -1) {
+      throw new Error("User not found");
+    }
+
+    // Update user data (keep password unchanged)
+>>>>>>> main
     existingUsers[userIndex] = {
       ...existingUsers[userIndex],
       name: userData.name,
       surname: userData.surname,
       cell: userData.cell,
     };
+<<<<<<< HEAD
     localStorage.setItem("users", JSON.stringify(existingUsers));
     
     // Try to update in json-server if available
@@ -94,6 +142,12 @@ export const updateProfile = createAsyncThunk(
       console.log("json-server not available, updated localStorage only");
     }
     
+=======
+
+    // Save back to localStorage
+    localStorage.setItem("users", JSON.stringify(existingUsers));
+
+>>>>>>> main
     return {
       name: userData.name,
       surname: userData.surname,

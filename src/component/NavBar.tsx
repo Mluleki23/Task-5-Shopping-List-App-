@@ -4,8 +4,26 @@ import "../App.css";
 
 export default function NavBar() {
   return (
+<<<<<<< HEAD
     <div className="navbar">
       <Link to="/home" className="navbar-link">
+=======
+    <div
+      className="NavBar"
+      style={{
+        backgroundColor: "blue",
+        width: "100%",
+        padding: "1rem",
+        color: "white",
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        boxSizing: "border-box",
+        borderRadius: "0 0 10px 10px",
+      }}
+    >
+      <Link to="/home" style={{ color: "white", textDecoration: "none" }}>
+>>>>>>> main
         Home
       </Link>
       <Link to="/shopping-list" className="navbar-link">

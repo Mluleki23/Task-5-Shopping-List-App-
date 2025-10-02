@@ -359,6 +359,7 @@ body {
 .gap-2 {
   gap: 1rem;
 }
+<<<<<<< HEAD
 
 /* Shopping List Styles */
 .shopping-list-page {
@@ -680,3 +681,5 @@ body {
     grid-template-columns: 1fr;
   }
 }
+=======
+>>>>>>> main
