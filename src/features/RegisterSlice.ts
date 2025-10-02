@@ -1,110 +1,67 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+// src/features/RegisterSlice.ts
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
-export interface RegisterState {
-  email: string;
-  password: string;
-  name: string;
-  surname: string;
-  cell: string;
+interface RegisterState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: RegisterState = {
-  email: "",
-  password: "",
-  name: "",
-  surname: "",
-  cell: "",
   status: "idle",
   error: null,
 };
 
-// Mock registration (no backend needed)
+// ✅ Register thunk
 export const registerUser = createAsyncThunk(
   "register/registerUser",
-  async (userData: {
-    email: string;
-    password: string;
-    name: string;
-    surname: string;
-    cell: string;
-  }) => {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Store user data in localStorage (mock database)
-    const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    
-    // Check if user already exists
-    const userExists = existingUsers.some((user: any) => user.email === userData.email);
-    if (userExists) {
-      throw new Error("User with this email already exists");
+  async (
+    newUser: {
+      name: string;
+      surname: string;
+      cell: string;
+      email: string;
+      password: string;
+    },
+    thunkAPI
+  ) => {
+    try {
+      // check if email already exists
+      const existing = await axios.get("http://localhost:5000/users", {
+        params: { email: newUser.email },
+      });
+
+      if (existing.data.length > 0) {
+        return thunkAPI.rejectWithValue("Email already registered");
+      }
+
+      // save new user into db.json
+      const response = await axios.post("http://localhost:5000/users", newUser);
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue("Registration failed");
     }
-    
-    // Add new user
-    existingUsers.push(userData);
-    localStorage.setItem("users", JSON.stringify(existingUsers));
-    
-    // Return user data (without password for security)
-    return {
-      email: userData.email,
-      name: userData.name,
-      surname: userData.surname,
-      cell: userData.cell,
-    };
   }
 );
 
-export const RegisterSlice = createSlice({
+const registerSlice = createSlice({
   name: "register",
   initialState,
-  reducers: {
-    setRegisterData: (
-      state,
-      action: PayloadAction<{
-        email: string;
-        password: string;
-        name: string;
-        surname: string;
-        cell: string;
-      }>
-    ) => {
-      state.email = action.payload.email;
-      state.password = action.payload.password;
-      state.name = action.payload.name;
-      state.surname = action.payload.surname;
-      state.cell = action.payload.cell;
-    },
-    resetRegister: (state) => {
-      state.email = "";
-      state.password = "";
-      state.name = "";
-      state.surname = "";
-      state.cell = "";
-      state.status = "idle";
-      state.error = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
         state.status = "loading";
+        state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.status = "succeeded";
-        state.email = action.payload.email;
-        state.name = action.payload.name;
-        state.surname = action.payload.surname;
-        state.cell = action.payload.cell;
-        state.password = ""; // clear for security
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message ?? "Something went wrong";
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { setRegisterData, resetRegister } = RegisterSlice.actions;
-export default RegisterSlice.reducer;
+export default registerSlice.reducer;

@@ -5,7 +5,7 @@ export default function NavBar() {
     <div
       className="NavBar"
       style={{
-        backgroundColor: "grey",
+        backgroundColor: "blue",
         width: "100%",
         padding: "1rem",
         color: "white",
