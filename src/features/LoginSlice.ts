@@ -1,6 +1,5 @@
 // src/redux/slices/LoginSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 
 export interface LoginState {
   loading: boolean;
@@ -18,10 +17,30 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/login", credentials);
-      return response.data;
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Get users from localStorage
+      const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
+      
+      // Find user with matching email and password
+      const user = existingUsers.find(
+        (u: any) => u.email === credentials.email && u.password === credentials.password
+      );
+      
+      if (!user) {
+        return thunkAPI.rejectWithValue("Invalid email or password");
+      }
+      
+      // Return user data (without password)
+      return {
+        email: user.email,
+        name: user.name,
+        surname: user.surname,
+        cell: user.cell,
+      };
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(err.response?.data?.message || "Login failed");
+      return thunkAPI.rejectWithValue("Login failed");
     }
   }
 );

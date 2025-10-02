@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/RegisterSlice";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,13 @@ export default function Register() {
     password: "",
   });
 
+  // Navigate to login after successful registration
+  useEffect(() => {
+    if (status === "succeeded") {
+      navigate("/login");
+    }
+  }, [status, navigate]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -26,7 +33,6 @@ export default function Register() {
     e.preventDefault();
 
     dispatch(registerUser(formData) as any);
-    navigate("/profile");
   };
 
   return (
