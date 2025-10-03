@@ -88,15 +88,12 @@ const Profile: React.FC = () => {
     localStorage.setItem("users", JSON.stringify(existingUsers));
 
     setPasswordSuccess("Password updated successfully!");
-<<<<<<< HEAD
-    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-=======
     setPasswordData({
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     });
->>>>>>> main
+
     setTimeout(() => {
       setIsChangingPassword(false);
       setPasswordSuccess("");
@@ -138,10 +135,6 @@ const Profile: React.FC = () => {
               <div className="profile-field-value">{cell}</div>
             </div>
             <div className="profile-actions">
-<<<<<<< HEAD
-              <button onClick={() => setIsEditing(true)} className="btn btn-primary">Edit Profile</button>
-              <button onClick={() => setIsChangingPassword(true)} className="btn btn-secondary">Change Password</button>
-=======
               <button
                 onClick={() => setIsEditing(true)}
                 className="btn btn-primary"
@@ -154,7 +147,6 @@ const Profile: React.FC = () => {
               >
                 Change Password
               </button>
->>>>>>> main
             </div>
           </div>
         )}
@@ -162,26 +154,6 @@ const Profile: React.FC = () => {
         {isEditing && (
           <form onSubmit={handleSubmit} className="profile-form">
             <div className="form-group">
-<<<<<<< HEAD
-              <label htmlFor="name" className="form-label">Name:</label>
-              <input type="text" name="name" id="name" className="form-input" value={formData.name} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="surname" className="form-label">Surname:</label>
-              <input type="text" name="surname" id="surname" className="form-input" value={formData.surname} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email:</label>
-              <input type="email" name="email" id="email" className="form-input" value={formData.email} onChange={handleChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="cell" className="form-label">Cell:</label>
-              <input type="tel" name="cell" id="cell" className="form-input" value={formData.cell} onChange={handleChange} required />
-            </div>
-            <div className="btn-group">
-              <button type="submit" disabled={status === "loading"} className="btn btn-success">{status === "loading" ? "Saving..." : "Save Changes"}</button>
-              <button type="button" onClick={() => { setIsEditing(false); setFormData({ name, surname, cell, email }); }} className="btn btn-outline">Cancel</button>
-=======
               <label htmlFor="name" className="form-label">
                 Name:
               </label>
@@ -255,7 +227,6 @@ const Profile: React.FC = () => {
               >
                 Cancel
               </button>
->>>>>>> main
             </div>
           </form>
         )}
@@ -263,24 +234,6 @@ const Profile: React.FC = () => {
         {isChangingPassword && (
           <form onSubmit={handlePasswordSubmit} className="profile-form">
             <div className="form-group">
-<<<<<<< HEAD
-              <label htmlFor="currentPassword" className="form-label">Current Password:</label>
-              <input type="password" name="currentPassword" id="currentPassword" className="form-input" value={passwordData.currentPassword} onChange={handlePasswordChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="newPassword" className="form-label">New Password:</label>
-              <input type="password" name="newPassword" id="newPassword" className="form-input" value={passwordData.newPassword} onChange={handlePasswordChange} required minLength={6} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="confirmPassword" className="form-label">Confirm New Password:</label>
-              <input type="password" name="confirmPassword" id="confirmPassword" className="form-input" value={passwordData.confirmPassword} onChange={handlePasswordChange} required minLength={6} />
-            </div>
-            {passwordError && <p className="message-error">{passwordError}</p>}
-            {passwordSuccess && <p className="message-success">{passwordSuccess}</p>}
-            <div className="btn-group">
-              <button type="submit" className="btn btn-green">Update Password</button>
-              <button type="button" onClick={() => { setIsChangingPassword(false); setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" }); setPasswordError(""); setPasswordSuccess(""); }} className="btn btn-outline">Cancel</button>
-=======
               <label htmlFor="currentPassword" className="form-label">
                 Current Password:
               </label>
@@ -348,7 +301,6 @@ const Profile: React.FC = () => {
               >
                 Cancel
               </button>
->>>>>>> main
             </div>
           </form>
         )}

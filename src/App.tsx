@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import ShoppingList from "./pages/ShoppingList";
 import NavBar from "./component/NavBar";
-import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -18,10 +17,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
-<<<<<<< HEAD
         <Route path="/shopping-list" element={<ShoppingList />} />
-=======
->>>>>>> main
       </Routes>
     </>
   );

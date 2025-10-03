@@ -1,12 +1,13 @@
+// src/pages/Register.tsx
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/RegisterSlice";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../../store";
+import type { RootState, AppDispatch } from "../../store";
 import "../App.css";
 
 export default function Register() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const status = useSelector((state: RootState) => state.register.status);
   const error = useSelector((state: RootState) => state.register.error);
@@ -32,7 +33,6 @@ export default function Register() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     dispatch(registerUser(formData) as any);
   };
 
@@ -95,13 +95,6 @@ export default function Register() {
           Register
         </button>
 
-<<<<<<< HEAD
-        {status === "loading" && <p className="message-loading">Registering...</p>}
-        {status === "succeeded" && (
-          <p className="message-success">Registration successful!</p>
-        )}
-        {status === "failed" && <p className="message-error">{error || "Something went wrong"}</p>}
-=======
         {status === "loading" && (
           <p className="message-loading">Registering...</p>
         )}
@@ -111,7 +104,6 @@ export default function Register() {
         {status === "failed" && (
           <p className="message-error">{error || "Something went wrong"}</p>
         )}
->>>>>>> main
 
         <p className="register-text">
           Already have an account?{" "}

@@ -1,32 +1,4 @@
 {
-  "users": [
-    {
-<<<<<<< HEAD
-      "name": "we",
-      "surname": "sibisi",
-      "cell": "0791881004",
-      "email": "Mnyandoletho0@gmail.com",
-      "password": "5698",
-      "id": 1
-    },
-    {
-      "name": "li",
-      "surname": "google",
-      "cell": "0791881007",
-      "email": "li@gmail.com",
-      "password": "2314",
-      "id": 2
-    }
-  ],
+  "users": [],
   "shoppingList": []
-=======
-      "id": "2df6",
-      "name": "MA",
-      "surname": "NGOBESE",
-      "cell": "0791881002",
-      "email": "mathusongobese28@gmail.com",
-      "password": "123456"
-    }
-  ]
->>>>>>> main
 }

@@ -4,12 +4,8 @@ import "../App.css";
 
 export default function NavBar() {
   return (
-<<<<<<< HEAD
-    <div className="navbar">
-      <Link to="/home" className="navbar-link">
-=======
     <div
-      className="NavBar"
+      className="navbar"
       style={{
         backgroundColor: "blue",
         width: "100%",
@@ -23,19 +19,21 @@ export default function NavBar() {
       }}
     >
       <Link to="/home" style={{ color: "white", textDecoration: "none" }}>
->>>>>>> main
         Home
       </Link>
-      <Link to="/shopping-list" className="navbar-link">
+      <Link
+        to="/shopping-list"
+        style={{ color: "white", textDecoration: "none" }}
+      >
         Shopping List
       </Link>
-      <Link to="/profile" className="navbar-link">
+      <Link to="/profile" style={{ color: "white", textDecoration: "none" }}>
         Profile
       </Link>
-      <Link to="/register" className="navbar-link">
+      <Link to="/register" style={{ color: "white", textDecoration: "none" }}>
         Register
       </Link>
-      <Link to="/login" className="navbar-link">
+      <Link to="/login" style={{ color: "white", textDecoration: "none" }}>
         Login
       </Link>
     </div>
