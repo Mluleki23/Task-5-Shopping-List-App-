@@ -6,9 +6,15 @@ interface ShoppingItemCardProps {
   item: ShoppingItem;
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit: (item: ShoppingItem) => void;
 }
 
-const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({ item, onToggleComplete, onDelete }) => {
+const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
+  item,
+  onToggleComplete,
+  onDelete,
+  onEdit,
+}) => {
   return (
     <div className={`shopping-item-card ${item.completed ? "completed" : ""}`}>
       <div className="item-checkbox">
@@ -35,13 +41,14 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({ item, onToggleCompl
         {item.notes && <p className="item-notes">{item.notes}</p>}
       </div>
 
-      <button
-        className="item-delete"
-        onClick={() => onDelete(item.id)}
-        title="Delete item"
-      >
-        🗑️
-      </button>
+      <div className="item-actions">
+        <button className="btn btn-edit" onClick={() => onEdit(item)}>
+          Edit
+        </button>
+        <button className="btn btn-delete" onClick={() => onDelete(item.id)}>
+          Delete
+        </button>
+      </div>
     </div>
   );
 };

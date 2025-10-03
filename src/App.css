@@ -359,7 +359,6 @@ body {
 .gap-2 {
   gap: 1rem;
 }
-<<<<<<< HEAD
 
 /* Shopping List Styles */
 .shopping-list-page {
@@ -412,6 +411,60 @@ body {
   display: block;
   color: #666;
   font-size: 0.9rem;
+}
+
+/* Search and Sort Controls */
+.shopping-list-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: blue;
+}
+
+.sort-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-box label {
+  font-weight: 500;
+  color: #333;
+}
+
+.sort-select {
+  padding: 0.7rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: blue;
 }
 
 .shopping-list-filters {
@@ -543,17 +596,37 @@ body {
   font-style: italic;
 }
 
-.item-delete {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: transform 0.2s;
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
-.item-delete:hover {
-  transform: scale(1.2);
+.btn-edit {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-edit:hover {
+  background: #45a049;
+}
+
+.btn-delete {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.btn-delete:hover {
+  background: #da190b;
 }
 
 /* Modal Styles */
@@ -680,6 +753,14 @@ body {
   .form-row {
     grid-template-columns: 1fr;
   }
+
+  .shopping-list-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box,
+  .sort-box {
+    width: 100%;
+  }
 }
-=======
->>>>>>> main

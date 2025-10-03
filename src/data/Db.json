@@ -31,26 +31,41 @@
       "cell": "0791881004",
       "email": "ho@gmail.com",
       "password": "1234567"
+    },
+    {
+      "id": "b072",
+      "name": "slie",
+      "surname": "sibiya",
+      "cell": "0987654321",
+      "email": "slie@gmail.com",
+      "password": "12345"
+    },
+    {
+      "id": "1a55",
+      "name": "Melo",
+      "surname": "Moloi",
+      "cell": "0791881000",
+      "email": "melo@gmail.com",
+      "password": "1234"
+    },
+    {
+      "id": "4c7c",
+      "name": "Mlu",
+      "surname": "Dube",
+      "cell": "0791881007",
+      "email": "dube@gmail.com",
+      "password": "14785"
     }
   ],
   "shoppingList": [
     {
-      "id": "1759489129476",
-      "name": "Bread",
+      "id": "1759502614426",
+      "name": "Milk",
       "quantity": 1,
-      "notes": "tr5sy",
+      "notes": "trghg",
       "category": "Groceries",
       "completed": false,
-      "createdAt": "2025-10-03T10:58:49.476Z"
-    },
-    {
-      "id": "1759493514778",
-      "name": "Apple",
-      "quantity": 2,
-      "notes": "yjuyfuj",
-      "category": "Groceries",
-      "completed": false,
-      "createdAt": "2025-10-03T12:11:54.778Z"
+      "createdAt": "2025-10-03T14:43:34.426Z"
     }
   ]
 }
