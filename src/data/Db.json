@@ -1,4 +1,56 @@
 {
-  "users": [],
-  "shoppingList": []
+  "users": [
+    {
+      "id": "297d",
+      "name": "de",
+      "surname": "dew",
+      "cell": "0791881002",
+      "email": "de@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "27cc",
+      "name": "Mlu",
+      "surname": "moloi",
+      "cell": "0791881007",
+      "email": "mluleki@gmail.com",
+      "password": "654123"
+    },
+    {
+      "id": "70a0",
+      "name": "HI",
+      "surname": "hoo",
+      "cell": "0791881007",
+      "email": "hoo@gmail.com",
+      "password": "258963"
+    },
+    {
+      "id": "38d6",
+      "name": "hu",
+      "surname": "ho",
+      "cell": "0791881004",
+      "email": "ho@gmail.com",
+      "password": "1234567"
+    }
+  ],
+  "shoppingList": [
+    {
+      "id": "1759489129476",
+      "name": "Bread",
+      "quantity": 1,
+      "notes": "tr5sy",
+      "category": "Groceries",
+      "completed": false,
+      "createdAt": "2025-10-03T10:58:49.476Z"
+    },
+    {
+      "id": "1759493514778",
+      "name": "Apple",
+      "quantity": 2,
+      "notes": "yjuyfuj",
+      "category": "Groceries",
+      "completed": false,
+      "createdAt": "2025-10-03T12:11:54.778Z"
+    }
+  ]
 }

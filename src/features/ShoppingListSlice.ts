@@ -1,4 +1,5 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export interface ShoppingItem {
   id: string;
@@ -13,60 +14,101 @@ export interface ShoppingItem {
 
 export interface ShoppingListState {
   items: ShoppingItem[];
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
   filter: "all" | "active" | "completed";
 }
 
-const loadItemsFromStorage = (): ShoppingItem[] => {
-  const stored = localStorage.getItem("shoppingList");
-  return stored ? JSON.parse(stored) : [];
-};
-
 const initialState: ShoppingListState = {
-  items: loadItemsFromStorage(),
+  items: [],
+  status: "idle",
+  error: null,
   filter: "all",
 };
 
-export const ShoppingListSlice = createSlice({
+// ✅ Fetch all items
+export const fetchItems = createAsyncThunk(
+  "shoppingList/fetchItems",
+  async () => {
+    const res = await axios.get("http://localhost:5000/shoppingList");
+    return res.data;
+  }
+);
+
+// ✅ Add new item
+export const addItem = createAsyncThunk(
+  "shoppingList/addItem",
+  async (itemData: Omit<ShoppingItem, "id" | "completed" | "createdAt">) => {
+    const newItem = {
+      ...itemData,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+    const res = await axios.post("http://localhost:5000/shoppingList", newItem);
+    return res.data;
+  }
+);
+
+// ✅ Delete item
+export const deleteItem = createAsyncThunk(
+  "shoppingList/deleteItem",
+  async (id: string) => {
+    await axios.delete(`http://localhost:5000/shoppingList/${id}`);
+    return id;
+  }
+);
+
+// ✅ Toggle complete
+export const toggleComplete = createAsyncThunk(
+  "shoppingList/toggleComplete",
+  async (id: string) => {
+    const res = await axios.get(`http://localhost:5000/shoppingList/${id}`);
+    const updated = { ...res.data, completed: !res.data.completed };
+    await axios.put(`http://localhost:5000/shoppingList/${id}`, updated);
+    return updated;
+  }
+);
+
+const ShoppingListSlice = createSlice({
   name: "shoppingList",
   initialState,
   reducers: {
-    addItem: (state, action: PayloadAction<Omit<ShoppingItem, "id" | "completed" | "createdAt">>) => {
-      const newItem: ShoppingItem = {
-        ...action.payload,
-        id: Date.now().toString(),
-        completed: false,
-        createdAt: new Date().toISOString(),
-      };
-      state.items.push(newItem);
-      localStorage.setItem("shoppingList", JSON.stringify(state.items));
-    },
-    updateItem: (state, action: PayloadAction<ShoppingItem>) => {
-      const index = state.items.findIndex(item => item.id === action.payload.id);
-      if (index !== -1) {
-        state.items[index] = action.payload;
-        localStorage.setItem("shoppingList", JSON.stringify(state.items));
-      }
-    },
-    deleteItem: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
-      localStorage.setItem("shoppingList", JSON.stringify(state.items));
-    },
-    toggleComplete: (state, action: PayloadAction<string>) => {
-      const item = state.items.find(item => item.id === action.payload);
-      if (item) {
-        item.completed = !item.completed;
-        localStorage.setItem("shoppingList", JSON.stringify(state.items));
-      }
-    },
-    setFilter: (state, action: PayloadAction<"all" | "active" | "completed">) => {
+    setFilter: (
+      state,
+      action: PayloadAction<"all" | "active" | "completed">
+    ) => {
       state.filter = action.payload;
     },
-    clearCompleted: (state) => {
-      state.items = state.items.filter(item => !item.completed);
-      localStorage.setItem("shoppingList", JSON.stringify(state.items));
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // fetch
+      .addCase(fetchItems.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchItems.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.items = action.payload;
+      })
+      .addCase(fetchItems.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || "Failed to fetch items";
+      })
+      // add
+      .addCase(addItem.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      })
+      // delete
+      .addCase(deleteItem.fulfilled, (state, action) => {
+        state.items = state.items.filter((item) => item.id !== action.payload);
+      })
+      // toggle
+      .addCase(toggleComplete.fulfilled, (state, action) => {
+        const index = state.items.findIndex((i) => i.id === action.payload.id);
+        if (index !== -1) state.items[index] = action.payload;
+      });
   },
 });
 
-export const { addItem, updateItem, deleteItem, toggleComplete, setFilter, clearCompleted } = ShoppingListSlice.actions;
+export const { setFilter } = ShoppingListSlice.actions;
 export default ShoppingListSlice.reducer;
