@@ -66,6 +66,42 @@
       "category": "Groceries",
       "completed": false,
       "createdAt": "2025-10-03T14:43:34.426Z"
+    },
+    {
+      "id": "1759825077671",
+      "name": "Milk",
+      "quantity": 1,
+      "notes": "ggfgg",
+      "category": "Groceries",
+      "completed": false,
+      "createdAt": "2025-10-07T08:17:57.671Z"
+    },
+    {
+      "id": "1759825203743",
+      "name": "fdxzg",
+      "quantity": 1,
+      "notes": "dfggdfzxg",
+      "category": "Dairy",
+      "completed": false,
+      "createdAt": "2025-10-07T08:20:03.743Z"
+    },
+    {
+      "id": "1759827625555",
+      "name": "Milk",
+      "quantity": 3,
+      "notes": "fcdgfdxzgd",
+      "category": "Groceries",
+      "completed": false,
+      "createdAt": "2025-10-07T09:00:25.555Z"
+    },
+    {
+      "id": "1759828069763",
+      "name": "rfdg",
+      "quantity": 1,
+      "notes": "fgdg",
+      "category": "Groceries",
+      "completed": false,
+      "createdAt": "2025-10-07T09:07:49.763Z"
     }
   ]
 }

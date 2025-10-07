@@ -3,6 +3,7 @@ import LoginReducer from "./src/features/LoginSlice";
 import RegisterReducer from "./src/features/RegisterSlice";
 import ProfileReducer from "./src/features/ProfileSlice";
 import ShoppingListReducer from "./src/features/ShoppingListSlice";
+import ShoppingListDetailReducer from "./src/features/ShoppingListDetailSlice"; // ✅ new import
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     register: RegisterReducer,
     profile: ProfileReducer,
     shoppingList: ShoppingListReducer,
+    shoppingListDetail: ShoppingListDetailReducer, // ✅ add here
   },
 });
 
