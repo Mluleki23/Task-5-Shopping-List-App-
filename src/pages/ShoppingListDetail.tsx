@@ -127,68 +127,37 @@ const ShoppingListDetail: React.FC = () => {
                 />
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Quantity *</label>
-                  <input
-                    type="number"
-                    className="form-input"
-                    min="1"
-                    value={form.quantity}
-                    onChange={(e) =>
-                      setForm({ ...form, quantity: parseInt(e.target.value) || 1 })
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Category *</label>
-                  <select
-                    className="form-input"
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  >
-                    <option>Groceries</option>
-                    <option>Fruits & Vegetables</option>
-                    <option>Dairy</option>
-                    <option>Meat & Seafood</option>
-                    <option>Bakery</option>
-                    <option>Beverages</option>
-                    <option>Household</option>
-                    <option>Personal Care</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </div>
-
               <div className="form-group">
-                <label className="form-label">Image URL (Optional)</label>
+                <label className="form-label">Quantity *</label>
                 <input
-                  type="url"
+                  type="number"
                   className="form-input"
-                  placeholder="https://example.com/image.jpg"
-                  value={form.image}
-                  onChange={(e) => setForm({ ...form, image: e.target.value })}
+                  min="1"
+                  value={form.quantity}
+                  onChange={(e) =>
+                    setForm({ ...form, quantity: parseInt(e.target.value) || 1 })
+                  }
+                  required
                 />
-                {form.image && (
-                  <div className="image-preview">
-                    <img src={form.image} alt="Preview" onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }} />
-                  </div>
-                )}
               </div>
 
               <div className="form-group">
-                <label className="form-label">Notes (Optional)</label>
-                <textarea
-                  className="form-textarea"
-                  placeholder="Add any additional notes..."
-                  value={form.notes}
-                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  rows={3}
-                />
+                <label className="form-label">Category *</label>
+                <select
+                  className="form-input"
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                >
+                  <option>Groceries</option>
+                  <option>Fruits & Vegetables</option>
+                  <option>Dairy</option>
+                  <option>Meat & Seafood</option>
+                  <option>Bakery</option>
+                  <option>Beverages</option>
+                  <option>Household</option>
+                  <option>Personal Care</option>
+                  <option>Other</option>
+                </select>
               </div>
 
               <div className="modal-actions">
@@ -229,11 +198,9 @@ const ShoppingListDetail: React.FC = () => {
         <thead>
           <tr>
             <th>✔</th>
-            <th>Image</th>
             <th>Name</th>
             <th>Quantity</th>
             <th>Category</th>
-            <th>Notes</th>
             <th>Date Added</th>
             <th>Actions</th>
           </tr>
@@ -248,23 +215,9 @@ const ShoppingListDetail: React.FC = () => {
                   onChange={() => toggleComplete(item.id)}
                 />
               </td>
-              <td>
-                {item.image ? (
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "5px" }}
-                  />
-                ) : (
-                  <span style={{ color: "#999" }}>No image</span>
-                )}
-              </td>
               <td>{item.name}</td>
               <td>{item.quantity}</td>
               <td>{item.category}</td>
-              <td style={{ maxWidth: "200px", fontSize: "0.9rem", color: "#666" }}>
-                {item.notes || <span style={{ color: "#ccc" }}>—</span>}
-              </td>
               <td>{new Date(item.createdAt).toLocaleDateString()}</td>
               <td>
                 <button
@@ -278,7 +231,7 @@ const ShoppingListDetail: React.FC = () => {
           ))}
           {items.length === 0 && (
             <tr>
-              <td colSpan={8} style={{ textAlign: "center" }}>
+              <td colSpan={6} style={{ textAlign: "center" }}>
                 No items yet. Add one above!
               </td>
             </tr>

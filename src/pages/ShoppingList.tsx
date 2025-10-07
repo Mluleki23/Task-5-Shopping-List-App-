@@ -268,16 +268,11 @@ const ShoppingLists: React.FC = () => {
                 />
               )}
               <h3>{list.name}</h3>
-              <p style={{ color: "#666", fontSize: "0.9rem" }}>
-                <strong>Quantity:</strong> {list.quantity} | <strong>Category:</strong> {list.category}
+              <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+                <strong>Category:</strong> {list.category}
               </p>
-              {list.notes && (
-                <p style={{ color: "#888", fontSize: "0.85rem", fontStyle: "italic", marginTop: "0.5rem" }}>
-                  {list.notes}
-                </p>
-              )}
-              <p style={{ fontSize: "0.8rem", color: "#999", marginTop: "0.5rem" }}>
-                Created: {new Date(list.createdAt).toLocaleDateString(undefined, {
+              <p style={{ fontSize: "0.85rem", color: "#999", marginTop: "0.3rem" }}>
+                <strong>Date Added:</strong> {new Date(list.createdAt).toLocaleDateString(undefined, {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
