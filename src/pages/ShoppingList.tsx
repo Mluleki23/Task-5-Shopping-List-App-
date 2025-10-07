@@ -1,221 +1,116 @@
+// ShoppingLists.tsx
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
-import type { RootState, AppDispatch } from "../../store";
-import {
-  addItem,
-  deleteItem,
-  toggleComplete,
-  updateItem,
-  setFilter,
-  clearCompleted,
-} from "../features/ShoppingListSlice";
-import AddItemModal from "../component/AddItemModal";
-import EditItemModal from "../component/EditItemModal";
-import ShoppingItemCard from "../component/ShoppingItemCard";
-import type { ShoppingItem } from "../features/ShoppingListSlice";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import "../App.css";
 
-const ShoppingList: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { items, filter } = useSelector(
-    (state: RootState) => state.shoppingList
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<ShoppingItem | null>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [sortBy, setSortBy] = useState<"name" | "category" | "date">("date");
+interface ShoppingList {
+  id: string;
+  name: string;
+  createdAt: string;
+}
 
-  // Get search query from URL
+const ShoppingLists: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [sortBy, setSortBy] = useState<"name" | "date">("date");
+  const [lists, setLists] = useState<ShoppingList[]>(() => {
+    const stored = localStorage.getItem("shoppingLists");
+    return stored ? JSON.parse(stored) : [];
+  });
+  const [newListName, setNewListName] = useState("");
+
   const searchQuery = searchParams.get("search") || "";
 
-  // Update URL when search changes
+  // Update URL search param
   const handleSearchChange = (value: string) => {
-    if (value) {
-      setSearchParams({ search: value });
-    } else {
-      setSearchParams({});
-    }
+    if (value) setSearchParams({ search: value });
+    else setSearchParams({});
   };
 
-  // Filter items by search query
-  const searchedItems = items.filter((item) => {
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    if (filter === "active") return !item.completed && matchesSearch;
-    if (filter === "completed") return item.completed && matchesSearch;
-    return matchesSearch;
-  });
+  // Filter + sort
+  const filtered = lists
+    .filter((list) =>
+      list.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
 
-  // Sort items
-  const sortedItems = [...searchedItems].sort((a, b) => {
-    switch (sortBy) {
-      case "name":
-        return a.name.localeCompare(b.name);
-      case "category":
-        return a.category.localeCompare(b.category);
-      case "date":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      default:
-        return 0;
-    }
-  });
-
-  const handleAddItem = (itemData: any) => {
-    dispatch(addItem(itemData));
-    setIsModalOpen(false);
+  // Add new list
+  const handleAddList = () => {
+    if (!newListName.trim()) return;
+    const newList: ShoppingList = {
+      id: Date.now().toString(),
+      name: newListName.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [...lists, newList];
+    setLists(updated);
+    localStorage.setItem("shoppingLists", JSON.stringify(updated));
+    setNewListName("");
   };
-
-  const handleUpdateItem = (item: ShoppingItem) => {
-    dispatch(updateItem(item));
-    setEditingItem(null);
-  };
-
-  const handleToggleComplete = (id: string) => {
-    dispatch(toggleComplete(id));
-  };
-
-  const handleDeleteItem = (id: string) => {
-    dispatch(deleteItem(id));
-  };
-
-  const handleClearCompleted = () => {
-    dispatch(clearCompleted());
-  };
-
-  const activeCount = items.filter((item) => !item.completed).length;
-  const completedCount = items.filter((item) => item.completed).length;
 
   return (
-    <div className="shopping-list-page">
-      <div className="shopping-list-container">
-        <div className="shopping-list-header">
-          <h1>My Shopping List</h1>
-          <button
-            className="btn btn-primary"
-            onClick={() => setIsModalOpen(true)}
-          >
-            + Add Item
-          </button>
-        </div>
+    <div className="shopping-lists-page">
+      <h1>My Shopping Lists</h1>
 
-        <div className="shopping-list-stats">
-          <div className="stat-item">
-            <span className="stat-number">{activeCount}</span>
-            <span className="stat-label">Active</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{completedCount}</span>
-            <span className="stat-label">Completed</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{items.length}</span>
-            <span className="stat-label">Total</span>
-          </div>
-        </div>
+      <div className="list-controls">
+        <input
+          type="text"
+          placeholder="Search lists..."
+          value={searchQuery}
+          onChange={(e) => handleSearchChange(e.target.value)}
+        />
 
-        {/* Search and Sort Controls */}
-        <div className="shopping-list-controls">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="🔍 Search items by name..."
-              className="search-input"
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-            />
-          </div>
-          <div className="sort-box">
-            <label htmlFor="sort-select">Sort by:</label>
-            <select
-              id="sort-select"
-              className="sort-select"
-              value={sortBy}
-              onChange={(e) =>
-                setSortBy(e.target.value as "name" | "category" | "date")
-              }
-            >
-              <option value="date">Date Added</option>
-              <option value="name">Name</option>
-              <option value="category">Category</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="shopping-list-filters">
-          <button
-            className={`filter-btn ${filter === "all" ? "active" : ""}`}
-            onClick={() => dispatch(setFilter("all"))}
-          >
-            All
-          </button>
-          <button
-            className={`filter-btn ${filter === "active" ? "active" : ""}`}
-            onClick={() => dispatch(setFilter("active"))}
-          >
-            Active
-          </button>
-          <button
-            className={`filter-btn ${filter === "completed" ? "active" : ""}`}
-            onClick={() => dispatch(setFilter("completed"))}
-          >
-            Completed
-          </button>
-          {completedCount > 0 && (
-            <button className="btn btn-outline" onClick={handleClearCompleted}>
-              Clear Completed
-            </button>
-          )}
-        </div>
-
-        <div className="shopping-list-items">
-          {sortedItems.length === 0 ? (
-            <div className="empty-state">
-              <p>
-                {searchQuery
-                  ? `No items found matching "${searchQuery}"`
-                  : "No items found"}
-              </p>
-              <button
-                className="btn btn-primary"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Add your first item
-              </button>
-            </div>
-          ) : (
-            sortedItems.map((item: ShoppingItem) => (
-              <ShoppingItemCard
-                key={item.id}
-                item={item}
-                onToggleComplete={handleToggleComplete}
-                onDelete={handleDeleteItem}
-                onEdit={setEditingItem}
-              />
-            ))
-          )}
-        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as "name" | "date")}
+        >
+          <option value="date">Date Added</option>
+          <option value="name">Name</option>
+        </select>
       </div>
 
-      {isModalOpen && (
-        <AddItemModal
-          onClose={() => setIsModalOpen(false)}
-          onAdd={handleAddItem}
+      <div className="add-list-box">
+        <input
+          type="text"
+          placeholder="Enter new list name..."
+          value={newListName}
+          onChange={(e) => setNewListName(e.target.value)}
         />
-      )}
+        <button onClick={handleAddList} className="btn btn-primary">
+          + Add List
+        </button>
+      </div>
 
-      {editingItem && (
-        <EditItemModal
-          item={editingItem}
-          onClose={() => setEditingItem(null)}
-          onUpdate={handleUpdateItem}
-        />
-      )}
+      <div className="lists-container">
+        {filtered.length === 0 ? (
+          <p>No lists found.</p>
+        ) : (
+          filtered.map((list) => (
+            <div key={list.id} className="list-card">
+              <h3>{list.name}</h3>
+              <p>
+                Created:{" "}
+                {new Date(list.createdAt).toLocaleDateString(undefined, {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </p>
+              <button
+                className="btn btn-outline"
+                onClick={() => navigate(`/lists/${list.id}`)}
+              >
+                View
+              </button>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
 
-export default ShoppingList;
+export default ShoppingLists;
