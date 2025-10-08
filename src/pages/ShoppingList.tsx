@@ -113,6 +113,41 @@ const ShoppingLists: React.FC = () => {
     }
   };
 
+  // Share list
+  const handleShareList = async (list: ShoppingList) => {
+    const shareText = `Check out my shopping list: ${list.name}\nCategory: ${list.category}\nQuantity: ${list.quantity}${list.notes ? `\nNotes: ${list.notes}` : ''}`;
+    const shareUrl = `${window.location.origin}/lists/${list.id}`;
+
+    // Check if Web Share API is available (mainly for mobile devices)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Shopping List: ${list.name}`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (error) {
+        // User cancelled or error occurred
+        console.log('Share cancelled or failed');
+      }
+    } else {
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(`${shareText}\n\nView details: ${shareUrl}`);
+        alert('List details copied to clipboard!');
+      } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = `${shareText}\n\nView details: ${shareUrl}`;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('List details copied to clipboard!');
+      }
+    }
+  };
+
   return (
     <div className="shopping-lists-page">
       <h1>My Shopping Lists</h1>
@@ -278,7 +313,7 @@ const ShoppingLists: React.FC = () => {
                   year: "numeric",
                 })}
               </p>
-              <div style={{ display: "flex", gap: "0.3rem", marginTop: "1rem" }}>
+              <div style={{ display: "flex", gap: "0.3rem", marginTop: "1rem", flexWrap: "wrap" }}>
                 <button
                   className="btn btn-outline"
                   onClick={() => navigate(`/lists/${list.id}`)}
@@ -290,6 +325,12 @@ const ShoppingLists: React.FC = () => {
                   onClick={() => handleEditList(list)}
                 >
                   Edit
+                </button>
+                <button
+                  className="btn btn-share"
+                  onClick={() => handleShareList(list)}
+                >
+                  Share
                 </button>
                 <button
                   className="btn btn-delete"

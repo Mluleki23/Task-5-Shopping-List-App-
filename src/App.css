@@ -629,6 +629,22 @@ body {
   background: #da190b;
 }
 
+.btn-share {
+  background: #2196F3;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-share:hover {
+  background: #0b7dda;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
