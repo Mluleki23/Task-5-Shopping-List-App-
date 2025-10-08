@@ -949,3 +949,166 @@ body {
     font-size: 2rem;
   }
 }
+
+/* Home Page Styles */
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.home-content {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+}
+
+.home-hero {
+  margin-bottom: 4rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.home-title {
+  font-size: 3.5rem;
+  color: white;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  line-height: 1.2;
+}
+
+.brand-name {
+  background: linear-gradient(45deg, #ffd89b, #19547b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+.home-subtitle {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.home-description {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.get-started-btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.get-started-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ffd89b, #19547b);
+  color: white;
+}
+
+.get-started-btn:active {
+  transform: translateY(-1px);
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.feature-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.feature-card:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  color: #667eea;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design for Home Page */
+@media (max-width: 768px) {
+  .home-title {
+    font-size: 2.5rem;
+  }
+
+  .home-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .home-description {
+    font-size: 1rem;
+  }
+
+  .get-started-btn {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+
+  .home-features {
+    grid-template-columns: 1fr;
+  }
+}
