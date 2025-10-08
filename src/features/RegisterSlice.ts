@@ -35,7 +35,8 @@ export const registerUser = createAsyncThunk(
         return thunkAPI.rejectWithValue("Email already registered");
       }
 
-      existingUsers.push(newUser);
+      const userWithId = { ...newUser, id: Date.now().toString() };
+      existingUsers.push(userWithId);
       localStorage.setItem("users", JSON.stringify(existingUsers));
 
       // Try to save to json-server

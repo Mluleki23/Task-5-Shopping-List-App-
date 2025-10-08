@@ -43,6 +43,7 @@ export const loginUser = createAsyncThunk(
       
       // Return user data (without password)
       return {
+        id: user.id,
         email: user.email,
         name: user.name,
         surname: user.surname,

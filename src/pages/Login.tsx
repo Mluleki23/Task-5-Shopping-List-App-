@@ -22,7 +22,7 @@ const Login: React.FC = () => {
   // Redirect to profile after successful login (only after form submission)
   useEffect(() => {
     if (user && hasSubmitted) {
-      navigate("/profile");
+      navigate("/shopping-list");
     }
   }, [user, hasSubmitted, navigate]);
 
