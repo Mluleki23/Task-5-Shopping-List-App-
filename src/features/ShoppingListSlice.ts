@@ -1,16 +1,12 @@
 // ShoppingListSlice.ts
-import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/shoppingList";
+const API_URL = "http://localhost:5000/shoppingItems";
 
 export interface ShoppingItem {
   id: string;
-  userId: string;
+  userId: string; // each item belongs to a user
   name: string;
   quantity: number;
   notes?: string;
@@ -27,31 +23,15 @@ export interface ShoppingListState {
   error: string | null;
 }
 
-// -----------------------
-// Helpers
-// -----------------------
-
+// Load items for a specific user from localStorage
 const loadItemsFromStorage = (userId: string): ShoppingItem[] => {
-  const stored = localStorage.getItem("shoppingLists");
+  const stored = localStorage.getItem("shoppingList");
   if (!stored) return [];
   const allItems: ShoppingItem[] = JSON.parse(stored);
   return allItems.filter((item) => item.userId === userId);
 };
 
-const saveItemsToStorage = (userId: string, userItems: ShoppingItem[]) => {
-  const stored = localStorage.getItem("shoppingLists");
-  const allItems: ShoppingItem[] = stored ? JSON.parse(stored) : [];
-  const otherUsers = allItems.filter((item) => item.userId !== userId);
-  localStorage.setItem(
-    "shoppingLists",
-    JSON.stringify([...otherUsers, ...userItems])
-  );
-};
-
-// -----------------------
-// Initial State
-// -----------------------
-
+// Initial state (empty, filtered later per user)
 const initialState: ShoppingListState = {
   items: [],
   filter: "all",
@@ -63,7 +43,7 @@ const initialState: ShoppingListState = {
 // Async Thunks
 // -----------------------
 
-// Fetch items for a user
+// Fetch all items for a user
 export const fetchItems = createAsyncThunk(
   "shoppingList/fetchItems",
   async (userId: string) => {
@@ -76,7 +56,7 @@ export const fetchItems = createAsyncThunk(
   }
 );
 
-// Add new item for a user
+// Add a new item for a user
 export const addItem = createAsyncThunk(
   "shoppingList/addItem",
   async (itemData: Omit<ShoppingItem, "id" | "completed" | "createdAt">) => {
@@ -86,21 +66,21 @@ export const addItem = createAsyncThunk(
       completed: false,
       createdAt: new Date().toISOString(),
     };
-
     try {
       const response = await axios.post(API_URL, newItem);
       return response.data;
     } catch (error) {
-      const stored = localStorage.getItem("shoppingLists");
+      // Save to localStorage if server unavailable
+      const stored = localStorage.getItem("shoppingList");
       const allItems: ShoppingItem[] = stored ? JSON.parse(stored) : [];
       allItems.push(newItem);
-      localStorage.setItem("shoppingLists", JSON.stringify(allItems));
+      localStorage.setItem("shoppingList", JSON.stringify(allItems));
       return newItem;
     }
   }
 );
 
-// Update item
+// Update an item
 export const updateItem = createAsyncThunk(
   "shoppingList/updateItem",
   async (item: ShoppingItem) => {
@@ -108,46 +88,43 @@ export const updateItem = createAsyncThunk(
       const response = await axios.put(`${API_URL}/${item.id}`, item);
       return response.data;
     } catch (error) {
-      const stored = localStorage.getItem("shoppingLists");
+      const stored = localStorage.getItem("shoppingList");
       const allItems: ShoppingItem[] = stored ? JSON.parse(stored) : [];
       const index = allItems.findIndex((i) => i.id === item.id);
       if (index !== -1) allItems[index] = item;
-      localStorage.setItem("shoppingLists", JSON.stringify(allItems));
+      localStorage.setItem("shoppingList", JSON.stringify(allItems));
       return item;
     }
   }
 );
 
-// Delete item
+// Delete an item
 export const deleteItem = createAsyncThunk(
   "shoppingList/deleteItem",
-  async (payload: { id: string; userId: string }) => {
-    const { id, userId } = payload;
+  async (id: string) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
       return id;
     } catch (error) {
-      const stored = localStorage.getItem("shoppingLists");
+      const stored = localStorage.getItem("shoppingList");
       const allItems: ShoppingItem[] = stored ? JSON.parse(stored) : [];
       const filtered = allItems.filter((i) => i.id !== id);
-      localStorage.setItem("shoppingLists", JSON.stringify(filtered));
+      localStorage.setItem("shoppingList", JSON.stringify(filtered));
       return id;
     }
   }
 );
 
-// Toggle complete
+// Toggle completed
 export const toggleComplete = createAsyncThunk(
   "shoppingList/toggleComplete",
-  async (payload: { id: string; userId: string }) => {
-    const { id, userId } = payload;
-    const stored = localStorage.getItem("shoppingLists");
+  async (id: string) => {
+    const stored = localStorage.getItem("shoppingList");
     const allItems: ShoppingItem[] = stored ? JSON.parse(stored) : [];
-    const item = allItems.find((i) => i.id === id && i.userId === userId);
+    const item = allItems.find((i) => i.id === id);
     if (!item) throw new Error("Item not found");
 
     const updatedItem = { ...item, completed: !item.completed };
-
     try {
       const response = await axios.patch(`${API_URL}/${id}`, {
         completed: updatedItem.completed,
@@ -156,7 +133,7 @@ export const toggleComplete = createAsyncThunk(
     } catch (error) {
       const index = allItems.findIndex((i) => i.id === id);
       if (index !== -1) allItems[index] = updatedItem;
-      localStorage.setItem("shoppingLists", JSON.stringify(allItems));
+      localStorage.setItem("shoppingList", JSON.stringify(allItems));
       return updatedItem;
     }
   }
@@ -176,15 +153,12 @@ export const ShoppingListSlice = createSlice({
     ) => {
       state.filter = action.payload;
     },
-    clearCompleted: (state, action: PayloadAction<string>) => {
-      const userId = action.payload;
+    clearCompleted: (state) => {
       state.items = state.items.filter((item) => !item.completed);
-      const stored = localStorage.getItem("shoppingLists");
+      const stored = localStorage.getItem("shoppingList");
       const allItems: ShoppingItem[] = stored ? JSON.parse(stored) : [];
-      const remaining = allItems.filter(
-        (i) => i.completed === false || i.userId !== userId
-      );
-      localStorage.setItem("shoppingLists", JSON.stringify(remaining));
+      const remaining = allItems.filter((i) => !i.completed);
+      localStorage.setItem("shoppingList", JSON.stringify(remaining));
     },
   },
   extraReducers: (builder) => {

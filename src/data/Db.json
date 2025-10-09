@@ -1,8 +1,35 @@
 {
   "users": [
- 
+    {
+      "id": "1759995198204",
+      "name": "Msizi",
+      "surname": "Mthembu",
+      "cell": "0791881002",
+      "email": "msizi1@gmail.com",
+      "password": "1234"
+    }
   ],
-  "shoppingList": [
-   
+  "shoppingLists": [
+    {
+      "id": "1759995246988",
+      "userId": "1759995198204",
+      "name": "SWIDI",
+      "quantity": 1,
+      "category": "Groceries",
+      "notes": "TYH6Y7",
+      "createdAt": "2025-10-09T07:34:06.988Z"
+    }
+  ],
+  "shoppingItems": [
+    {
+      "id": "1759996237962",
+      "listId": "1759995246988",
+      "name": "dhyyth",
+      "quantity": 1,
+      "category": "Groceries",
+      "notes": "ytytytytytytytyth",
+      "completed": false,
+      "createdAt": "2025-10-09T07:50:37.962Z"
+    }
   ]
 }

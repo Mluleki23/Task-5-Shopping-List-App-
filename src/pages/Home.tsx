@@ -9,23 +9,23 @@ export default function Home() {
       <div className="home-content">
         <div className="home-hero">
           <h1 className="home-title">
-            Welcome to <span className="brand-name"></span>
+            Welcome to <span className="brand-name">ShopWise</span>
           </h1>
           <p className="home-subtitle">
             Your smart shopping companion for organized and stress-free shopping
           </p>
           <p className="home-description">
-            Create, manage, and organize your shopping lists with ease. 
+            Create, manage, and organize your shopping lists with ease.
             Never forget an item again!
           </p>
-          <button 
+          <button
             className="get-started-btn"
             onClick={() => navigate('/login')}
           >
             Get Started
           </button>
         </div>
-        
+
         <div className="home-features">
           <div className="feature-card">
             <div className="feature-icon">📝</div>
