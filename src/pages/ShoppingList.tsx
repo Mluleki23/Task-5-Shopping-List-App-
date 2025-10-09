@@ -180,36 +180,19 @@ const ShoppingLists: React.FC = () => {
 
   // Share list
   const handleShareList = async (list: ShoppingList) => {
-    const shareText = `Check out my shopping list: ${list.name}\nCategory: ${
-      list.category
-    }\nQuantity: ${list.quantity}${list.notes ? `\nNotes: ${list.notes}` : ""}`;
     const shareUrl = `${window.location.origin}/lists/${list.id}`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Shopping List: ${list.name}`,
-          text: shareText,
-          url: shareUrl,
-        });
-      } catch {
-        console.log("Share cancelled or failed");
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(
-          `${shareText}\n\nView details: ${shareUrl}`
-        );
-        alert("List details copied to clipboard!");
-      } catch {
-        const textArea = document.createElement("textarea");
-        textArea.value = `${shareText}\n\nView details: ${shareUrl}`;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        alert("List details copied to clipboard!");
-      }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("List link copied to clipboard!");
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      alert("List link copied to clipboard!");
     }
   };
 
@@ -415,6 +398,15 @@ const ShoppingLists: React.FC = () => {
               </p>
               <p
                 style={{
+                  color: "#666",
+                  fontSize: "0.9rem",
+                  marginTop: "0.3rem",
+                }}
+              >
+                <strong>Quantity:</strong> {list.quantity}
+              </p>
+              <p
+                style={{
                   fontSize: "0.85rem",
                   color: "#999",
                   marginTop: "0.3rem",
@@ -439,7 +431,7 @@ const ShoppingLists: React.FC = () => {
                   className="btn btn-outline"
                   onClick={() => navigate(`/lists/${list.id}`)}
                 >
-                  View
+                  View Item
                 </button>
                 <button
                   className="btn btn-edit"

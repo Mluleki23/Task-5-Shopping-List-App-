@@ -7,6 +7,14 @@
       "cell": "0791881002",
       "email": "msizi1@gmail.com",
       "password": "1234"
+    },
+    {
+      "id": "1760005413574",
+      "name": "Sfundo",
+      "surname": "Moloi",
+      "cell": "0791881002",
+      "email": "sfundo@gmail.com",
+      "password": "1234"
     }
   ],
   "shoppingLists": [
@@ -18,6 +26,14 @@
       "category": "Groceries",
       "notes": "TYH6Y7",
       "createdAt": "2025-10-09T07:34:06.988Z"
+    },
+    {
+      "id": "1760019492972",
+      "userId": "1759995198204",
+      "name": "weekend special",
+      "quantity": 3,
+      "category": "Groceries",
+      "createdAt": "2025-10-09T14:18:12.972Z"
     }
   ],
   "shoppingItems": [
