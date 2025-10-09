@@ -1,10 +1,13 @@
 // ShoppingLists.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 import "../App.css";
 
 interface ShoppingList {
   id: string;
+  userId: string;
   name: string;
   quantity: number;
   category: string;
@@ -17,10 +20,23 @@ const ShoppingLists: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState<"name" | "date">("date");
+  const currentUser = useSelector((state: RootState) => state.login.user);
+
+  if (!currentUser) {
+    return <div>Please log in to view your shopping lists.</div>;
+  }
   const [lists, setLists] = useState<ShoppingList[]>(() => {
     const stored = localStorage.getItem("shoppingLists");
-    return stored ? JSON.parse(stored) : [];
+    const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+    return currentUser ? allLists.filter(list => list.userId && list.userId === currentUser.id) : [];
   });
+
+  useEffect(() => {
+    const stored = localStorage.getItem("shoppingLists");
+    const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+    setLists(currentUser ? allLists.filter(list => list.userId && list.userId === currentUser.id) : []);
+  }, [currentUser?.id]);
+
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -53,10 +69,12 @@ const ShoppingLists: React.FC = () => {
   const handleAddList = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
-    
+
     if (editingId) {
       // Update existing list
-      const updated = lists.map((list) =>
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const updatedAll = allLists.map((list) =>
         list.id === editingId
           ? {
               ...list,
@@ -68,13 +86,15 @@ const ShoppingLists: React.FC = () => {
             }
           : list
       );
-      setLists(updated);
-      localStorage.setItem("shoppingLists", JSON.stringify(updated));
+      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+      const updatedUserLists = updatedAll.filter(list => list.userId && list.userId === currentUser.id);
+      setLists(updatedUserLists);
       setEditingId(null);
     } else {
       // Add new list
       const newList: ShoppingList = {
         id: Date.now().toString(),
+        userId: currentUser.id,
         name: form.name.trim(),
         quantity: form.quantity,
         category: form.category,
@@ -82,12 +102,20 @@ const ShoppingLists: React.FC = () => {
         image: form.image.trim() || undefined,
         createdAt: new Date().toISOString(),
       };
-      const updated = [...lists, newList];
-      setLists(updated);
-      localStorage.setItem("shoppingLists", JSON.stringify(updated));
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const updatedAll = [...allLists, newList];
+      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+      setLists([...lists, newList]);
     }
-    
-    setForm({ name: "", quantity: 1, category: "Groceries", notes: "", image: "" });
+
+    setForm({
+      name: "",
+      quantity: 1,
+      category: "Groceries",
+      notes: "",
+      image: "",
+    });
     setShowModal(false);
   };
 
@@ -107,18 +135,22 @@ const ShoppingLists: React.FC = () => {
   // Delete list
   const handleDeleteList = (id: string) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      const updated = lists.filter((list) => list.id !== id);
-      setLists(updated);
-      localStorage.setItem("shoppingLists", JSON.stringify(updated));
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const updatedAll = allLists.filter((list) => list.id !== id);
+      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+      const updatedUserLists = updatedAll.filter(list => list.userId && list.userId === currentUser.id);
+      setLists(updatedUserLists);
     }
   };
 
   // Share list
   const handleShareList = async (list: ShoppingList) => {
-    const shareText = `Check out my shopping list: ${list.name}\nCategory: ${list.category}\nQuantity: ${list.quantity}${list.notes ? `\nNotes: ${list.notes}` : ''}`;
+    const shareText = `Check out my shopping list: ${list.name}\nCategory: ${
+      list.category
+    }\nQuantity: ${list.quantity}${list.notes ? `\nNotes: ${list.notes}` : ""}`;
     const shareUrl = `${window.location.origin}/lists/${list.id}`;
 
-    // Check if Web Share API is available (mainly for mobile devices)
     if (navigator.share) {
       try {
         await navigator.share({
@@ -126,24 +158,23 @@ const ShoppingLists: React.FC = () => {
           text: shareText,
           url: shareUrl,
         });
-      } catch (error) {
-        // User cancelled or error occurred
-        console.log('Share cancelled or failed');
+      } catch {
+        console.log("Share cancelled or failed");
       }
     } else {
-      // Fallback: Copy to clipboard
       try {
-        await navigator.clipboard.writeText(`${shareText}\n\nView details: ${shareUrl}`);
-        alert('List details copied to clipboard!');
-      } catch (error) {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
+        await navigator.clipboard.writeText(
+          `${shareText}\n\nView details: ${shareUrl}`
+        );
+        alert("List details copied to clipboard!");
+      } catch {
+        const textArea = document.createElement("textarea");
         textArea.value = `${shareText}\n\nView details: ${shareUrl}`;
         document.body.appendChild(textArea);
         textArea.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         document.body.removeChild(textArea);
-        alert('List details copied to clipboard!');
+        alert("List details copied to clipboard!");
       }
     }
   };
@@ -169,12 +200,12 @@ const ShoppingLists: React.FC = () => {
         </select>
       </div>
 
-      <button 
-        className="btn btn-primary" 
+      <button
+        className="btn btn-primary"
         onClick={() => setShowModal(true)}
         style={{ marginBottom: "1.5rem" }}
       >
-        + Add New Item
+        + Add New List
       </button>
 
       {/* Modal for adding items */}
@@ -183,11 +214,20 @@ const ShoppingLists: React.FC = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{editingId ? "Edit Item" : "Add New Item"}</h2>
-              <button className="modal-close" onClick={() => {
-                setShowModal(false);
-                setEditingId(null);
-                setForm({ name: "", quantity: 1, category: "Groceries", notes: "", image: "" });
-              }}>
+              <button
+                className="modal-close"
+                onClick={() => {
+                  setShowModal(false);
+                  setEditingId(null);
+                  setForm({
+                    name: "",
+                    quantity: 1,
+                    category: "Groceries",
+                    notes: "",
+                    image: "",
+                  });
+                }}
+              >
                 ×
               </button>
             </div>
@@ -213,7 +253,10 @@ const ShoppingLists: React.FC = () => {
                     min="1"
                     value={form.quantity}
                     onChange={(e) =>
-                      setForm({ ...form, quantity: parseInt(e.target.value) || 1 })
+                      setForm({
+                        ...form,
+                        quantity: parseInt(e.target.value) || 1,
+                      })
                     }
                     required
                   />
@@ -224,7 +267,9 @@ const ShoppingLists: React.FC = () => {
                   <select
                     className="form-input"
                     value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, category: e.target.value })
+                    }
                   >
                     <option>Groceries</option>
                     <option>Fruits & Vegetables</option>
@@ -250,9 +295,13 @@ const ShoppingLists: React.FC = () => {
                 />
                 {form.image && (
                   <div className="image-preview">
-                    <img src={form.image} alt="Preview" onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }} />
+                    <img
+                      src={form.image}
+                      alt="Preview"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
                   </div>
                 )}
               </div>
@@ -269,13 +318,19 @@ const ShoppingLists: React.FC = () => {
               </div>
 
               <div className="modal-actions">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => {
                     setShowModal(false);
                     setEditingId(null);
-                    setForm({ name: "", quantity: 1, category: "Groceries", notes: "", image: "" });
+                    setForm({
+                      name: "",
+                      quantity: 1,
+                      category: "Groceries",
+                      notes: "",
+                      image: "",
+                    });
                   }}
                 >
                   Cancel
@@ -290,30 +345,62 @@ const ShoppingLists: React.FC = () => {
       )}
 
       <div className="lists-container">
-        {filtered.length === 0 ? (
-          <p>No lists found.</p>
+        {lists.length === 0 ? (
+          <p style={{ textAlign: "center", marginTop: "2rem", color: "#555" }}>
+            You have no shopping lists yet. Click "Add New Item" to create one!
+          </p>
+        ) : filtered.length === 0 ? (
+          <p style={{ textAlign: "center", marginTop: "2rem", color: "#555" }}>
+            No lists match your search.
+          </p>
         ) : (
           filtered.map((list) => (
             <div key={list.id} className="list-card">
               {list.image && (
-                <img 
-                  src={list.image} 
+                <img
+                  src={list.image}
                   alt={list.name}
-                  style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "8px 8px 0 0", marginBottom: "1rem" }}
+                  style={{
+                    width: "100%",
+                    height: "150px",
+                    objectFit: "cover",
+                    borderRadius: "8px 8px 0 0",
+                    marginBottom: "1rem",
+                  }}
                 />
               )}
               <h3>{list.name}</h3>
-              <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+              <p
+                style={{
+                  color: "#666",
+                  fontSize: "0.9rem",
+                  marginTop: "0.5rem",
+                }}
+              >
                 <strong>Category:</strong> {list.category}
               </p>
-              <p style={{ fontSize: "0.85rem", color: "#999", marginTop: "0.3rem" }}>
-                <strong>Date Added:</strong> {new Date(list.createdAt).toLocaleDateString(undefined, {
+              <p
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#999",
+                  marginTop: "0.3rem",
+                }}
+              >
+                <strong>Date Added:</strong>{" "}
+                {new Date(list.createdAt).toLocaleDateString(undefined, {
                   day: "numeric",
                   month: "short",
                   year: "numeric",
                 })}
               </p>
-              <div style={{ display: "flex", gap: "0.3rem", marginTop: "1rem", flexWrap: "wrap" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.3rem",
+                  marginTop: "1rem",
+                  flexWrap: "wrap",
+                }}
+              >
                 <button
                   className="btn btn-outline"
                   onClick={() => navigate(`/lists/${list.id}`)}

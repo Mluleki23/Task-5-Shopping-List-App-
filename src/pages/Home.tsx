@@ -9,7 +9,7 @@ export default function Home() {
       <div className="home-content">
         <div className="home-hero">
           <h1 className="home-title">
-            Welcome to <span className="brand-name">ShopEasy</span>
+            Welcome to <span className="brand-name"></span>
           </h1>
           <p className="home-subtitle">
             Your smart shopping companion for organized and stress-free shopping
