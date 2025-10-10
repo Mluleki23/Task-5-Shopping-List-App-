@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# Shopping List App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+A simple and responsive Shopping List web app built with **React + TypeScript + Redux** using **json-server** for data storage. It allows users to register, log in, and manage shopping lists with full CRUD operations.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* User registration & login (encrypted passwords)
+* Protected routes for logged-in users
+* Profile view & update
+* Add, edit, delete shopping lists
+* Search and sort lists (URL updates accordingly)
+* Categories/tags for items
+* Responsive layout for all screen sizes
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Tech Stack
+
+* **Frontend:** React, TypeScript, Redux
+* **Routing:** React Router v6
+
+---
+
+## Setup
+
+```bash
+# Clone repo
+git clone https://github.com/<your-username>/<repo-name>.git
+cd repo-name
+
+# Install dependencies
+npm install
+
+# Run json-server
+npx json-server --watch db.json --port 4000
+
+# Start app
+npm start
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Folder Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+ ├─ components/
+ ├─ features/ (auth, shopping)
+ ├─ pages/ (Login, Register, Home, Profile)
+ ├─ app/store.ts
+ └─ index.tsx
+```
+
+---
+
+## Example db.json
+
+```json
+{
+  "users": [],
+  "lists": []
+}
+```
+
+---
+
+## Evaluation Checklist
+
+✅ Users can register/login
+✅ CRUD shopping lists
+✅ Search & sort synced to URL
+✅ Protected routes
+✅ Responsive & user-friendly UI
+✅ Frequent GitHub commits
+
+---
+
+## License
+
+MIT — Academic submission for coursework.
