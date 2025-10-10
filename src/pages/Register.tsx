@@ -91,9 +91,9 @@ export default function Register() {
           required
         />
 
-        <button type="submit" className="btn btn-dark">
-          Register
-        </button>
+        <button type="submit" className="login-btn">
+           Register
+         </button>
 
         {status === "loading" && (
           <p className="message-loading">Registering...</p>
