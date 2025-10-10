@@ -44,6 +44,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <div className="home-image">
+        <img src="/src/images/download.jpg" alt="Shopping illustration" />
+      </div>
     </div>
   );
 }

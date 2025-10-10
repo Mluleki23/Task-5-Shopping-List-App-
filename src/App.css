@@ -1022,6 +1022,58 @@ button.navbar-link {
   cursor: pointer;
 }
 
+/* Home Page Styles */
+.home-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 100vh;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.home-content {
+  flex: 1;
+  max-width: 50%;
+}
+
+.home-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Home Page */
+@media (max-width: 768px) {
+  .home-page {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .home-content {
+    max-width: 100%;
+  }
+
+  .home-image {
+    margin-top: 2rem;
+  }
+
+  .home-image img {
+    max-width: 80%;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .shopping-list-stats {
