@@ -159,7 +159,7 @@ const ShoppingListDetail: React.FC = () => {
 
   return (
     <div className="list-detail-page">
-      <button className="btn btn-outline" onClick={() => navigate(-1)}>
+      <button className="btn btn-dark" onClick={() => navigate(-1)}>
         ← Back
       </button>
 

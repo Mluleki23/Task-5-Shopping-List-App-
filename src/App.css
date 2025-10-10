@@ -1031,12 +1031,106 @@ button.navbar-link {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  gap: 2rem;
+  gap: 3rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .home-content {
   flex: 1;
   max-width: 50%;
+}
+
+.home-hero {
+  margin-bottom: 3rem;
+}
+
+.home-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.brand-name {
+  color: #3498db;
+  font-weight: 800;
+}
+
+.home-subtitle {
+  font-size: 1.3rem;
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.home-description {
+  font-size: 1.1rem;
+  color: #34495e;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.get-started-btn {
+  background-color: #27ae60;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.get-started-btn:hover {
+  background-color: #229954;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid #ecf0f1;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: #7f8c8d;
+  line-height: 1.5;
+  font-size: 1rem;
 }
 
 .home-image {
@@ -1047,10 +1141,16 @@ button.navbar-link {
 }
 
 .home-image img {
-  max-width: 100%;
+  width: 120%;
+  max-width: 600px;
   height: auto;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.home-image img:hover {
+  transform: scale(1.02);
 }
 
 /* Responsive Home Page */
@@ -1058,19 +1158,62 @@ button.navbar-link {
   .home-page {
     flex-direction: column;
     text-align: center;
-    padding: 1rem;
+    padding: 1.5rem;
+    gap: 2rem;
   }
 
   .home-content {
     max-width: 100%;
   }
 
+  .home-title {
+    font-size: 2.5rem;
+  }
+
+  .home-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .home-description {
+    font-size: 1rem;
+  }
+
+  .home-features {
+    grid-template-columns: 1fr;
+    margin-top: 3rem;
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+
   .home-image {
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 
   .home-image img {
-    max-width: 80%;
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-page {
+    padding: 1rem;
+  }
+
+  .home-title {
+    font-size: 2rem;
+  }
+
+  .home-hero {
+    margin-bottom: 2rem;
+  }
+
+  .get-started-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
   }
 }
 
