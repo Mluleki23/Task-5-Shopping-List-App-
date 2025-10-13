@@ -34,7 +34,7 @@ A simple and responsive Shopping List web app built with **React + TypeScript + 
 
 ```bash
 # Clone repo
-git clone https://github.com/<your-username>/<repo-name>.git
+https://github.com/Mluleki23/Task-5-Shopping-List-App-
 cd repo-name
 
 # Install dependencies
