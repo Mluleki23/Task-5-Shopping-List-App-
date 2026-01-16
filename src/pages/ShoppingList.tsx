@@ -21,6 +21,7 @@ const ShoppingLists: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState<"name" | "date">("date");
+  const [successMessage, setSuccessMessage] = useState("");
   const currentUser = useSelector((state: RootState) => state.login.user);
 
   if (!currentUser) {
@@ -127,6 +128,8 @@ const ShoppingLists: React.FC = () => {
       try {
         const response = await axios.post("http://localhost:5000/shoppingLists", newList);
         setLists([...lists, response.data]);
+        setSuccessMessage("List added successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       } catch (error) {
         // Fallback to localStorage
         const stored = localStorage.getItem("shoppingLists");
@@ -134,6 +137,8 @@ const ShoppingLists: React.FC = () => {
         const updatedAll = [...allLists, newList];
         localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
         setLists([...lists, newList]);
+        setSuccessMessage("List added successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       }
     }
 
@@ -225,12 +230,14 @@ const ShoppingLists: React.FC = () => {
         + Add New List
       </button>
 
+      {successMessage && <p className="message-success">{successMessage}</p>}
+
       {/* Modal for adding items */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>{editingId ? "Edit Item" : "Add New Item"}</h2>
+              <h2>{editingId ? "Edit Item" : "Add New list"}</h2>
               <button
                 className="modal-close"
                 onClick={() => {
@@ -254,7 +261,7 @@ const ShoppingLists: React.FC = () => {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Enter item name"
+                  placeholder="Enter list name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required

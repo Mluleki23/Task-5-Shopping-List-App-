@@ -32,6 +32,7 @@ const ShoppingListDetail: React.FC = () => {
   const [sortBy, setSortBy] = useState<
     "name" | "category" | "date" | "quantity"
   >("date");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Load list items
   useEffect(() => {
@@ -92,10 +93,14 @@ const ShoppingListDetail: React.FC = () => {
       try {
         const response = await axios.post("http://localhost:5000/shoppingItems", newItem);
         setItems([...items, response.data]);
+        setSuccessMessage("Item added successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       } catch (error) {
         // Fallback to localStorage
         const updated = [...items, newItem];
         saveItems(updated);
+        setSuccessMessage("Item added successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
       }
     }
     setForm({ name: "", quantity: 1, category: "Groceries", notes: "", image: "" });
@@ -165,13 +170,15 @@ const ShoppingListDetail: React.FC = () => {
 
       <h2>Shopping List Items</h2>
 
-      <button 
-        className="btn btn-primary" 
+      <button
+        className="btn btn-primary"
         onClick={() => setShowModal(true)}
         style={{ marginBottom: "1.5rem" }}
       >
         + Add New Item
       </button>
+
+      {successMessage && <p className="message-success">{successMessage}</p>}
 
       {/* Modal for adding items */}
       {showModal && (

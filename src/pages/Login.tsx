@@ -13,6 +13,7 @@ const Login: React.FC = () => {
     (state: RootState) => state.login
   );
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -22,7 +23,8 @@ const Login: React.FC = () => {
   // Redirect to profile after successful login (only after form submission)
   useEffect(() => {
     if (user && hasSubmitted) {
-      navigate("/shopping-list");
+      setSuccessMessage("Login successful! Redirecting...");
+      setTimeout(() => navigate("/shopping-list"), 1000);
     }
   }, [user, hasSubmitted, navigate]);
 
@@ -75,6 +77,7 @@ const Login: React.FC = () => {
           {loading ? "Logging in..." : "Login"}
         </button>
 
+        {successMessage && <p className="message-success">{successMessage}</p>}
         {error && <p className="message-error">{error}</p>}
 
         <div className="signin-link">
