@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
+import axios from "axios";
 import "../App.css";
 
 interface ShoppingList {
@@ -20,11 +21,13 @@ const ShoppingLists: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState<"name" | "date">("date");
+  const [successMessage, setSuccessMessage] = useState("");
   const currentUser = useSelector((state: RootState) => state.login.user);
 
   if (!currentUser) {
     return <div>Please log in to view your shopping lists.</div>;
   }
+
   const [lists, setLists] = useState<ShoppingList[]>(() => {
     const stored = localStorage.getItem("shoppingLists");
     const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
@@ -32,9 +35,23 @@ const ShoppingLists: React.FC = () => {
   });
 
   useEffect(() => {
-    const stored = localStorage.getItem("shoppingLists");
-    const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-    setLists(currentUser ? allLists.filter(list => list.userId && list.userId === currentUser.id) : []);
+    if (!currentUser) {
+      setLists([]);
+      return;
+    }
+    // Try to fetch from server
+    const fetchLists = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/shoppingLists?userId=${currentUser.id}`);
+        setLists(response.data);
+      } catch (error) {
+        // Fallback to localStorage
+        const stored = localStorage.getItem("shoppingLists");
+        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+        setLists(allLists.filter(list => list.userId === currentUser.id));
+      }
+    };
+    fetchLists();
   }, [currentUser?.id]);
 
   const [showModal, setShowModal] = useState(false);
@@ -66,29 +83,35 @@ const ShoppingLists: React.FC = () => {
     });
 
   // Add or update list
-  const handleAddList = (e: React.FormEvent) => {
+  const handleAddList = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) return;
 
     if (editingId) {
       // Update existing list
-      const stored = localStorage.getItem("shoppingLists");
-      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-      const updatedAll = allLists.map((list) =>
-        list.id === editingId
-          ? {
-              ...list,
-              name: form.name.trim(),
-              quantity: form.quantity,
-              category: form.category,
-              notes: form.notes.trim() || undefined,
-              image: form.image.trim() || undefined,
-            }
-          : list
-      );
-      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
-      const updatedUserLists = updatedAll.filter(list => list.userId && list.userId === currentUser.id);
-      setLists(updatedUserLists);
+      const updatedList = {
+        ...lists.find(list => list.id === editingId)!,
+        name: form.name.trim(),
+        quantity: form.quantity,
+        category: form.category,
+        notes: form.notes.trim() || undefined,
+        image: form.image.trim() || undefined,
+      };
+      try {
+        const response = await axios.put(`http://localhost:5000/shoppingLists/${editingId}`, updatedList);
+        const updatedLists = lists.map(list => list.id === editingId ? response.data : list);
+        setLists(updatedLists);
+      } catch (error) {
+        // Fallback to localStorage
+        const stored = localStorage.getItem("shoppingLists");
+        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+        const updatedAll = allLists.map((list) =>
+          list.id === editingId ? updatedList : list
+        );
+        localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
+        const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
+        setLists(updatedUserLists);
+      }
       setEditingId(null);
     } else {
       // Add new list
@@ -102,11 +125,21 @@ const ShoppingLists: React.FC = () => {
         image: form.image.trim() || undefined,
         createdAt: new Date().toISOString(),
       };
-      const stored = localStorage.getItem("shoppingLists");
-      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-      const updatedAll = [...allLists, newList];
-      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
-      setLists([...lists, newList]);
+      try {
+        const response = await axios.post("http://localhost:5000/shoppingLists", newList);
+        setLists([...lists, response.data]);
+        setSuccessMessage("List added successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+      } catch (error) {
+        // Fallback to localStorage
+        const stored = localStorage.getItem("shoppingLists");
+        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+        const updatedAll = [...allLists, newList];
+        localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
+        setLists([...lists, newList]);
+        setSuccessMessage("List added successfully!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+      }
     }
 
     setForm({
@@ -133,49 +166,38 @@ const ShoppingLists: React.FC = () => {
   };
 
   // Delete list
-  const handleDeleteList = (id: string) => {
+  const handleDeleteList = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      const stored = localStorage.getItem("shoppingLists");
-      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-      const updatedAll = allLists.filter((list) => list.id !== id);
-      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
-      const updatedUserLists = updatedAll.filter(list => list.userId && list.userId === currentUser.id);
-      setLists(updatedUserLists);
+      try {
+        await axios.delete(`http://localhost:5000/shoppingLists/${id}`);
+        setLists(lists.filter(list => list.id !== id));
+      } catch (error) {
+        // Fallback to localStorage
+        const stored = localStorage.getItem("shoppingLists");
+        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+        const updatedAll = allLists.filter((list) => list.id !== id);
+        localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
+        const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
+        setLists(updatedUserLists);
+      }
     }
   };
 
   // Share list
   const handleShareList = async (list: ShoppingList) => {
-    const shareText = `Check out my shopping list: ${list.name}\nCategory: ${
-      list.category
-    }\nQuantity: ${list.quantity}${list.notes ? `\nNotes: ${list.notes}` : ""}`;
     const shareUrl = `${window.location.origin}/lists/${list.id}`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Shopping List: ${list.name}`,
-          text: shareText,
-          url: shareUrl,
-        });
-      } catch {
-        console.log("Share cancelled or failed");
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(
-          `${shareText}\n\nView details: ${shareUrl}`
-        );
-        alert("List details copied to clipboard!");
-      } catch {
-        const textArea = document.createElement("textarea");
-        textArea.value = `${shareText}\n\nView details: ${shareUrl}`;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-        alert("List details copied to clipboard!");
-      }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("List link copied to clipboard!");
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      alert("List link copied to clipboard!");
     }
   };
 
@@ -208,12 +230,14 @@ const ShoppingLists: React.FC = () => {
         + Add New List
       </button>
 
+      {successMessage && <p className="message-success">{successMessage}</p>}
+
       {/* Modal for adding items */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>{editingId ? "Edit Item" : "Add New Item"}</h2>
+              <h2>{editingId ? "Edit Item" : "Add New list"}</h2>
               <button
                 className="modal-close"
                 onClick={() => {
@@ -237,7 +261,7 @@ const ShoppingLists: React.FC = () => {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Enter item name"
+                  placeholder="Enter list name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   required
@@ -336,7 +360,7 @@ const ShoppingLists: React.FC = () => {
                   Cancel
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  {editingId ? "Update Item" : "Add Item"}
+                  {editingId ? "Update Item" : "Add List"}
                 </button>
               </div>
             </form>
@@ -347,7 +371,7 @@ const ShoppingLists: React.FC = () => {
       <div className="lists-container">
         {lists.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "2rem", color: "#555" }}>
-            You have no shopping lists yet. Click "Add New Item" to create one!
+            You have no shopping lists yet. Click "Add New List" to create one!
           </p>
         ) : filtered.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "2rem", color: "#555" }}>
@@ -381,6 +405,15 @@ const ShoppingLists: React.FC = () => {
               </p>
               <p
                 style={{
+                  color: "#666",
+                  fontSize: "0.9rem",
+                  marginTop: "0.3rem",
+                }}
+              >
+                <strong>Quantity:</strong> {list.quantity}
+              </p>
+              <p
+                style={{
                   fontSize: "0.85rem",
                   color: "#999",
                   marginTop: "0.3rem",
@@ -405,7 +438,7 @@ const ShoppingLists: React.FC = () => {
                   className="btn btn-outline"
                   onClick={() => navigate(`/lists/${list.id}`)}
                 >
-                  View
+                  View Item
                 </button>
                 <button
                   className="btn btn-edit"

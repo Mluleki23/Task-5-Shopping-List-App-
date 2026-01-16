@@ -43,12 +43,12 @@ export const registerUser = createAsyncThunk(
       try {
         const response = await axios.post(
           "http://localhost:5000/users",
-          newUser
+          userWithId
         );
         return response.data;
       } catch {
         console.log("json-server not available, saved to localStorage only");
-        return newUser; // still return success from localStorage
+        return userWithId; // still return success from localStorage
       }
     } catch (err) {
       return thunkAPI.rejectWithValue("Registration failed");
