@@ -1,49 +1,67 @@
-<img src="https://socialify.git.ci/Mluleki23/Task-5-Shopping-List-App-/image?language=1&owner=1&name=1&stargazers=1&theme=Light" alt="Task-5-Shopping-List-App-" width="640" height="320" />
 # Shopping List App
-
-
 
 ---
 
 ## Overview
 
-A simple and responsive Shopping List web app built with **React + TypeScript + Redux** using **json-server** for data storage. It allows users to register, log in, and manage shopping lists with full CRUD operations.
+A simple and responsive **Shopping List web application** built with **React**, **TypeScript**, and **Redux**, using **json-server** as a mock backend. The app allows users to register, log in, and manage shopping lists with full CRUD functionality.
 
 ---
 
 ## Features
 
-* User registration & login (encrypted passwords)
-* Protected routes for logged-in users
-* Profile view & update
-* Add, edit, delete shopping lists
-* Search and sort lists (URL updates accordingly)
-* Categories/tags for items
-* Responsive layout for all screen sizes
+* User registration and login (encrypted passwords)
+* Protected routes for authenticated users
+* View and update user profile
+* Add, edit, and delete shopping lists
+* Search and sort shopping lists (URL updates accordingly)
+* Categories/tags for list items
+* Fully responsive design for all screen sizes
 
 ---
 
 ## Tech Stack
 
-* **Frontend:** React, TypeScript, Redux
-* **Routing:** React Router v6
+**Frontend**
+
+* React
+* TypeScript
+* Redux
+
+**Routing**
+
+* React Router v6
+
+**Backend (Mock API)**
+
+* json-server
 
 ---
 
-## Setup
+## Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-# Clone repo
-https://github.com/Mluleki23/Task-5-Shopping-List-App-
-cd repo-name
+git clone https://github.com/Mluleki23/Task-5-Shopping-List-App-
+cd Task-5-Shopping-List-App-
+```
 
-# Install dependencies
+### 2. Install Dependencies
+
+```bash
 npm install
+```
 
-# Run json-server
+### 3. Run json-server
+
+```bash
 npx json-server --watch db.json --port 4000
+```
 
-# Start app
+### 4. Start the Application
+
+```bash
 npm start
 ```
 
@@ -51,18 +69,25 @@ npm start
 
 ## Folder Structure
 
-```
+```text
 src/
  ├─ components/
- ├─ features/ (auth, shopping)
- ├─ pages/ (Login, Register, Home, Profile)
- ├─ app/store.ts
+ ├─ features/
+ │   ├─ auth/
+ │   └─ shopping/
+ ├─ pages/
+ │   ├─ Login.tsx
+ │   ├─ Register.tsx
+ │   ├─ Home.tsx
+ │   └─ Profile.tsx
+ ├─ app/
+ │   └─ store.ts
  └─ index.tsx
 ```
 
 ---
 
-## Example db.json
+## Example `db.json`
 
 ```json
 {
@@ -75,15 +100,12 @@ src/
 
 ## Evaluation Checklist
 
-✅ Users can register/login
-✅ CRUD shopping lists
-✅ Search & sort synced to URL
-✅ Protected routes
-✅ Responsive & user-friendly UI
-✅ Frequent GitHub commits
+* ✅ Users can register and log in
+* ✅ Full CRUD functionality for shopping lists
+* ✅ Search and sort synced with URL parameters
+* ✅ Protected routes for authenticated users
+* ✅ Responsive and user-friendly UI
+* ✅ Frequent and meaningful GitHub commits
 
 ---
 
-## License
-
-MIT — Academic submission for coursework.
