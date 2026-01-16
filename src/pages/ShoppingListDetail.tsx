@@ -103,6 +103,14 @@ const ShoppingListDetail: React.FC = () => {
         setTimeout(() => setSuccessMessage(""), 3000);
       }
     }
+    
+    // Ensure data is saved to localStorage before navigating
+    const updatedItems = editingId 
+      ? items.map(i => i.id === editingId ? { ...i, name: form.name.trim(), quantity: form.quantity, category: form.category, notes: form.notes.trim() || undefined, image: form.image.trim() || undefined } : i)
+      : [...items, { id: Date.now().toString(), listId: listId!, name: form.name.trim(), quantity: form.quantity, category: form.category, notes: form.notes.trim() || undefined, image: form.image.trim() || undefined, completed: false, createdAt: new Date().toISOString() }];
+    
+    localStorage.setItem(`items_${listId}`, JSON.stringify(updatedItems));
+    
     setForm({ name: "", quantity: 1, category: "Groceries", notes: "", image: "" });
     setShowModal(false);
   };
@@ -162,10 +170,19 @@ const ShoppingListDetail: React.FC = () => {
     }
   });
 
+  const handleBackToLists = () => {
+    console.log('Back button clicked');
+    try {
+      navigate("/lists");
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
   return (
     <div className="list-detail-page">
-      <button className="btn btn-dark" onClick={() => navigate(-1)}>
-        ← Back
+      <button className="btn btn-dark" onClick={handleBackToLists}>
+        ← Back to Lists
       </button>
 
       <h2>Shopping List Items</h2>

@@ -39,19 +39,10 @@ const ShoppingLists: React.FC = () => {
       setLists([]);
       return;
     }
-    // Try to fetch from server
-    const fetchLists = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/shoppingLists?userId=${currentUser.id}`);
-        setLists(response.data);
-      } catch (error) {
-        // Fallback to localStorage
-        const stored = localStorage.getItem("shoppingLists");
-        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-        setLists(allLists.filter(list => list.userId === currentUser.id));
-      }
-    };
-    fetchLists();
+    // Always use localStorage for reliability
+    const stored = localStorage.getItem("shoppingLists");
+    const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+    setLists(allLists.filter(list => list.userId === currentUser.id));
   }, [currentUser?.id]);
 
   const [showModal, setShowModal] = useState(false);
@@ -108,7 +99,7 @@ const ShoppingLists: React.FC = () => {
         const updatedAll = allLists.map((list) =>
           list.id === editingId ? updatedList : list
         );
-        localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
+        localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
         const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
         setLists(updatedUserLists);
       }
@@ -135,8 +126,9 @@ const ShoppingLists: React.FC = () => {
         const stored = localStorage.getItem("shoppingLists");
         const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
         const updatedAll = [...allLists, newList];
-        localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
-        setLists([...lists, newList]);
+        localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+        const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
+        setLists(updatedUserLists);
         setSuccessMessage("List added successfully!");
         setTimeout(() => setSuccessMessage(""), 3000);
       }
@@ -176,7 +168,7 @@ const ShoppingLists: React.FC = () => {
         const stored = localStorage.getItem("shoppingLists");
         const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
         const updatedAll = allLists.filter((list) => list.id !== id);
-        localStorage.setItem("shoppingItems", JSON.stringify(updatedAll));
+        localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
         const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
         setLists(updatedUserLists);
       }

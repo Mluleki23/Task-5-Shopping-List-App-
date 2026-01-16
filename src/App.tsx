@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import ShoppingList from "./pages/ShoppingList";
-import ShoppingLists from "./pages/ShoppingListDetail";
+import ShoppingLists from "./pages/ShoppingList";
 import ShoppingListDetail from "./pages/ShoppingListDetail";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
