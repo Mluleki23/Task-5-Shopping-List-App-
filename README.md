@@ -53,17 +53,19 @@ cd Task-5-Shopping-List-App-
 npm install
 ```
 
-### 3. Run json-server
+### 3. Start the Application
+
+```bash
+npm run dev
+```
+
+### 4. Run json-server
 
 ```bash
 npx json-server --watch db.json --port 4000
 ```
 
-### 4. Start the Application
 
-```bash
-npm start
-```
 
 ---
 
