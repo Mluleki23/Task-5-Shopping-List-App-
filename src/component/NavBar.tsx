@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../store";
 import { logout } from "../features/LoginSlice";
@@ -7,12 +7,15 @@ import "../App.css";
 export default function NavBar() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation();
   const currentUser = useSelector((state: RootState) => state.login.user);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
+
+  const isLandingPage = location.pathname === "/" || location.pathname === "/home";
 
   return (
     <div className="navbar">
@@ -29,9 +32,11 @@ export default function NavBar() {
             <Link to="/profile" className="navbar-link">
               Profile
             </Link>
-            <button onClick={handleLogout} className="navbar-link">
-              Logout
-            </button>
+            {!isLandingPage && (
+              <button onClick={handleLogout} className="navbar-link">
+                Logout
+              </button>
+            )}
           </>
         ) : (
           <>
