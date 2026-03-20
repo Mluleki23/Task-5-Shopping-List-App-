@@ -21,11 +21,14 @@ export const loginUser = createAsyncThunk(
   async (credentials: { email: string; password: string }, thunkAPI) => {
     try {
       let users = [];
+      let fromServer = false;
       
       // Try to get users from json-server first
       try {
-        const response = await axios.get("http://localhost:5000/users");
+        const response = await axios.get("http://localhost:4000/users");
         users = response.data;
+        fromServer = true;
+        console.log("Fetched users from json-server");
       } catch (serverError) {
         // If json-server is not running, fall back to localStorage
         console.log("json-server not available, using localStorage");
@@ -40,6 +43,10 @@ export const loginUser = createAsyncThunk(
       if (!user) {
         return thunkAPI.rejectWithValue("Invalid email or password");
       }
+      
+      // Always sync users to localStorage so other features (profile update, etc) can access them
+      console.log("Syncing users to localStorage");
+      localStorage.setItem("users", JSON.stringify(users));
       
       // Return user data (without password)
       return {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProfile, updateProfile } from "../features/ProfileSlice";
+import { fetchProfile, updateProfile, clearError } from "../features/ProfileSlice";
 import type { RootState, AppDispatch } from "../../store";
 import "../App.css";
 
@@ -50,10 +50,38 @@ const Profile: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      dispatch(updateProfile({ ...formData, email: formData.email }));
-      setIsEditing(false);
+    
+    // Validate form data
+    if (!loggedInUser?.email) {
+      alert("Error: Not logged in properly. Please refresh and log in again.");
+      return;
     }
+    
+    if (!formData.name || !formData.surname || !formData.cell || !formData.email) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    console.log("Updating profile with:", {
+      originalEmail: loggedInUser.email,
+      newData: formData
+    });
+
+    const result = dispatch(updateProfile({ 
+      ...formData, 
+      email: formData.email,
+      originalEmail: loggedInUser.email // Pass original email for lookup
+    }));
+    
+    // Handle async action result
+    (result as any).then((action: any) => {
+      console.log("Update result:", action);
+      if (action.type === updateProfile.fulfilled.type) {
+        setIsEditing(false);
+      } else if (action.type === updateProfile.rejected.type) {
+        console.error("Update failed:", action.payload);
+      }
+    });
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -71,8 +99,15 @@ const Profile: React.FC = () => {
       return;
     }
 
+    // Use logged-in user's email for lookup (not profile state email)
+    const userEmail = loggedInUser?.email;
+    if (!userEmail) {
+      setPasswordError("Error: Not logged in properly");
+      return;
+    }
+
     const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-    const userIndex = existingUsers.findIndex((u: any) => u.email === email);
+    const userIndex = existingUsers.findIndex((u: any) => u.email === userEmail);
 
     if (userIndex === -1) {
       setPasswordError("User not found");
@@ -136,7 +171,10 @@ const Profile: React.FC = () => {
             </div>
             <div className="profile-actions">
               <button
-                onClick={() => setIsEditing(true)}
+                onClick={() => {
+                  dispatch(clearError());
+                  setIsEditing(true);
+                }}
                 className="btn btn-primary"
               >
                 Edit Profile

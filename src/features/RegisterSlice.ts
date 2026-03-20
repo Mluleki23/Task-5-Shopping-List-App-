@@ -42,7 +42,7 @@ export const registerUser = createAsyncThunk(
       // Try to save to json-server
       try {
         const response = await axios.post(
-          "http://localhost:5000/users",
+          "http://localhost:4000/users",
           userWithId
         );
         return response.data;

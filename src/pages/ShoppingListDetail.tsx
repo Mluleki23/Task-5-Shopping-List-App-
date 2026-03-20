@@ -38,7 +38,7 @@ const ShoppingListDetail: React.FC = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/shoppingItems?listId=${listId}`);
+        const response = await axios.get(`http://localhost:4000/shoppingItems?listId=${listId}`);
         setItems(response.data);
       } catch (error) {
         // Fallback to localStorage
@@ -69,7 +69,7 @@ const ShoppingListDetail: React.FC = () => {
         image: form.image.trim() || undefined,
       };
       try {
-        const response = await axios.put(`http://localhost:5000/shoppingItems/${editingId}`, updatedItem);
+        const response = await axios.put(`http://localhost:4000/shoppingItems/${editingId}`, updatedItem);
         setItems(items.map(i => i.id === editingId ? response.data : i));
       } catch (error) {
         // Fallback
@@ -91,7 +91,7 @@ const ShoppingListDetail: React.FC = () => {
         createdAt: new Date().toISOString(),
       };
       try {
-        const response = await axios.post("http://localhost:5000/shoppingItems", newItem);
+        const response = await axios.post("http://localhost:4000/shoppingItems", newItem);
         setItems([...items, response.data]);
         setSuccessMessage("Item added successfully!");
         setTimeout(() => setSuccessMessage(""), 3000);
@@ -120,7 +120,7 @@ const ShoppingListDetail: React.FC = () => {
     if (!item) return;
     const updatedItem = { ...item, completed: !item.completed };
     try {
-      await axios.patch(`http://localhost:5000/shoppingItems/${id}`, { completed: updatedItem.completed });
+      await axios.patch(`http://localhost:4000/shoppingItems/${id}`, { completed: updatedItem.completed });
       setItems(items.map(i => i.id === id ? updatedItem : i));
     } catch (error) {
       // Fallback
@@ -133,7 +133,7 @@ const ShoppingListDetail: React.FC = () => {
 
   const deleteItem = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/shoppingItems/${id}`);
+      await axios.delete(`http://localhost:4000/shoppingItems/${id}`);
       setItems(items.filter(i => i.id !== id));
     } catch (error) {
       // Fallback

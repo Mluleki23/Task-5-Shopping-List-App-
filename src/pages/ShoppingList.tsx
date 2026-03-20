@@ -28,21 +28,35 @@ const ShoppingLists: React.FC = () => {
     return <div>Please log in to view your shopping lists.</div>;
   }
 
-  const [lists, setLists] = useState<ShoppingList[]>(() => {
-    const stored = localStorage.getItem("shoppingLists");
-    const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-    return currentUser ? allLists.filter(list => list.userId && list.userId === currentUser.id) : [];
-  });
+  const [lists, setLists] = useState<ShoppingList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load lists from json-server and localStorage
+  const loadLists = async () => {
+    setIsLoading(true);
+    try {
+      // Try to fetch from json-server first
+      const response = await axios.get(`http://localhost:4000/shoppingLists?userId=${currentUser.id}`);
+      const serverLists = response.data;
+      setLists(serverLists);
+
+      // Sync localStorage with server data
+      const allLists: ShoppingList[] = serverLists;
+      localStorage.setItem("shoppingLists", JSON.stringify(allLists));
+    } catch {
+      // Fallback to localStorage
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const userLists = allLists.filter(list => list.userId === currentUser.id);
+      setLists(userLists);
+    }
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    if (!currentUser) {
-      setLists([]);
-      return;
+    if (currentUser?.id) {
+      loadLists();
     }
-    // Always use localStorage for reliability
-    const stored = localStorage.getItem("shoppingLists");
-    const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-    setLists(allLists.filter(list => list.userId === currentUser.id));
   }, [currentUser?.id]);
 
   const [showModal, setShowModal] = useState(false);
@@ -88,20 +102,25 @@ const ShoppingLists: React.FC = () => {
         notes: form.notes.trim() || undefined,
         image: form.image.trim() || undefined,
       };
+      
+      // Always update localStorage first
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const updatedAll = allLists.map((list) =>
+        list.id === editingId ? updatedList : list
+      );
+      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+      const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
+      setLists(updatedUserLists);
+
+      // Try to sync to server
       try {
-        const response = await axios.put(`http://localhost:5000/shoppingLists/${editingId}`, updatedList);
-        const updatedLists = lists.map(list => list.id === editingId ? response.data : list);
-        setLists(updatedLists);
+        const response = await axios.put(`http://localhost:4000/shoppingLists/${editingId}`, updatedList);
+        // Update state with server response
+        const syncedLists = updatedUserLists.map(list => list.id === editingId ? response.data : list);
+        setLists(syncedLists);
       } catch (error) {
-        // Fallback to localStorage
-        const stored = localStorage.getItem("shoppingLists");
-        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-        const updatedAll = allLists.map((list) =>
-          list.id === editingId ? updatedList : list
-        );
-        localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
-        const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
-        setLists(updatedUserLists);
+        console.log("json-server not available, updated localStorage only");
       }
       setEditingId(null);
     } else {
@@ -116,21 +135,25 @@ const ShoppingLists: React.FC = () => {
         image: form.image.trim() || undefined,
         createdAt: new Date().toISOString(),
       };
+
+      // Always update localStorage first
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const updatedAll = [...allLists, newList];
+      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+      const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
+      setLists(updatedUserLists);
+      setSuccessMessage("List added successfully!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+
+      // Try to sync to server
       try {
-        const response = await axios.post("http://localhost:5000/shoppingLists", newList);
-        setLists([...lists, response.data]);
-        setSuccessMessage("List added successfully!");
-        setTimeout(() => setSuccessMessage(""), 3000);
+        const response = await axios.post("http://localhost:4000/shoppingLists", newList);
+        // Update state with server response
+        const syncedLists = updatedUserLists.map(list => list.id === newList.id ? response.data : list);
+        setLists(syncedLists);
       } catch (error) {
-        // Fallback to localStorage
-        const stored = localStorage.getItem("shoppingLists");
-        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-        const updatedAll = [...allLists, newList];
-        localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
-        const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
-        setLists(updatedUserLists);
-        setSuccessMessage("List added successfully!");
-        setTimeout(() => setSuccessMessage(""), 3000);
+        console.log("json-server not available, using localStorage only");
       }
     }
 
@@ -160,17 +183,19 @@ const ShoppingLists: React.FC = () => {
   // Delete list
   const handleDeleteList = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
+      // Always update localStorage first
+      const stored = localStorage.getItem("shoppingLists");
+      const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
+      const updatedAll = allLists.filter((list) => list.id !== id);
+      localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
+      const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
+      setLists(updatedUserLists);
+
+      // Try to sync to server
       try {
-        await axios.delete(`http://localhost:5000/shoppingLists/${id}`);
-        setLists(lists.filter(list => list.id !== id));
+        await axios.delete(`http://localhost:4000/shoppingLists/${id}`);
       } catch (error) {
-        // Fallback to localStorage
-        const stored = localStorage.getItem("shoppingLists");
-        const allLists: ShoppingList[] = stored ? JSON.parse(stored) : [];
-        const updatedAll = allLists.filter((list) => list.id !== id);
-        localStorage.setItem("shoppingLists", JSON.stringify(updatedAll));
-        const updatedUserLists = updatedAll.filter(list => list.userId === currentUser.id);
-        setLists(updatedUserLists);
+        console.log("json-server not available, deleted from localStorage only");
       }
     }
   };
